@@ -18,6 +18,8 @@ module Utils
   EXIT_STATUS_FIELD = :exitStatus
   SPAWNER_ERROR_FIELD = :spawnerError
 
+  TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
+
   REPORT_FIELDS = %i[
         application
         parameters

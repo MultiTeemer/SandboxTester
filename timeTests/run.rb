@@ -8,8 +8,15 @@ class TimeTests < Utils::SpawnerTester
 
   def test_time_limit
     Utils::compile_for_test(__method__)
-    puts self.run_spawner_test($spawner, 1, {:tl => 0.5})
-
+    params = [
+        { :tl => 0.5 },
+        { :d => 0.5 },
+        { :d => 0.3 },
+    ]
+    params.each_index do |i|
+      rpt = self.run_spawner_test($spawner, i + 1, params[i])
+      assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::TIME_LIMIT_EXCEEDED_RESULT)
+    end
     Utils::clear(Dir.getwd)
   end
 
