@@ -61,7 +61,7 @@ module Utils
 
   def self.clear(dir)
     Dir.foreach('bin/') do |item|
-      File.delete("bin/#{item}") if item =~ /\.exe$/
+      File.delete("bin/#{item}") if item =~ /\.(exe|txt)$/
     end
   end
 
