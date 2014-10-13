@@ -90,6 +90,7 @@ module Utils
     def exit_success?(report)
       assert_equal(report[TERMINATE_REASON_FIELD], 'ExitProcess')
       assert_equal(report[EXIT_STATUS_FIELD], '0')
+      assert_equal(report[SPAWNER_ERROR_FIELD], '<none>')
     end
 
   end
