@@ -39,7 +39,7 @@ module Utils
     ]
 
 	def self.system_dir?(dir)
-		['.', '..', '.idea'].include? dir
+		['.', '..', '.idea', '.git'].include? dir
   end
 
   def self.compile_for_cpp(file, out)
