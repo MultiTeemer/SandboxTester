@@ -19,6 +19,12 @@ module Utils
   SPAWNER_ERROR_FIELD = :spawnerError
 
   TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
+  WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
+  ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExitProcess'
+
+  ACCESS_VIOLATION_EXIT_STATUS = 'AccessViolation'
+  STACK_OVERFLOW_EXIT_STATUS = 'StackOverflow'
+  INT_DIVIDE_BY_ZERO_EXIT_STATUS = 'IntegerDivideByZero'
 
   REPORT_FIELDS = %i[
         application
