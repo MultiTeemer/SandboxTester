@@ -20,11 +20,14 @@ module Utils
 
   TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
   WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
-  ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExitProcess'
+  MEMORY_LIMIT_EXCEEDED_RESULT = 'MemoryLimitExceeded'
+  ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExit'
 
   ACCESS_VIOLATION_EXIT_STATUS = 'AccessViolation'
   STACK_OVERFLOW_EXIT_STATUS = 'StackOverflow'
   INT_DIVIDE_BY_ZERO_EXIT_STATUS = 'IntegerDivideByZero'
+  ILLEGAL_INSTRUCTION_EXIT_STATUS = 'IllegalInstruction'
+  PRIVILEGED_INSTRUCTION_EXIT_STATUS = 'PrivilegedInstruction'
 
   REPORT_FIELDS = %i[
         application
