@@ -10,7 +10,7 @@ if spawner == nil
 end
 
 Dir.foreach('.') do |item|
-    if Utils::system_dir?(item) == false && File.directory?(item)
+    if File.exists?("#{item}/run.rb")
         Dir.chdir(item)
         system('ruby', 'run.rb', spawner)
         Dir.chdir('..')
