@@ -25,11 +25,14 @@ class MemoryTests < Utils::SpawnerTester
 
   def test_memory_limit
     Utils::compile_for_test(__method__)
-    memory_limit = [*([4] * 5), 1e-3]
+    memory_limit = [4] * 10 # TODO: figure out
     memory_limit.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1, {:ml => memory_limit[i]})
-      #puts rpt[Utils::MEMORY_LIMIT_FIELD],rpt[Utils::PEAK_MEMORY_USED_FIELD], rpt[Utils::TERMINATE_REASON_FIELD]
-      #assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], 'MemoryLimitExceeded')
+      puts '-' * 30 + "\n"
+      puts "Test #{i + 1}"
+      puts rpt[Utils::TERMINATE_REASON_FIELD], rpt[Utils::MEMORY_LIMIT_FIELD], rpt[Utils::PEAK_MEMORY_USED_FIELD]
+      puts '-' * 30 + "\n"
+      #assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::MEMORY_LIMIT_EXCEEDED_RESULT)
     end
     Utils::clear('.')
   end
