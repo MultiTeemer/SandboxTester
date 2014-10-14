@@ -11,6 +11,7 @@ class ExitStatusTests < Utils::SpawnerTester
       Utils::STACK_OVERFLOW_EXIT_STATUS,
       Utils::ACCESS_VIOLATION_EXIT_STATUS,
       Utils::INT_DIVIDE_BY_ZERO_EXIT_STATUS,
+      Utils::PRIVILEGED_INSTRUCTION_EXIT_STATUS,
     ]
     statuses.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1)
