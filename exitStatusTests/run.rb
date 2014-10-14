@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'test/unit'
 require '../utils.rb'
 
@@ -18,7 +17,7 @@ class ExitStatusTests < Utils::SpawnerTester
       assert_equal(rpt[Utils::EXIT_STATUS_FIELD], statuses[i])
       #assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::ABNORMAL_EXIT_PROCESS_RESULT)
     end
-    Utils::clear(Dir.getwd)
+    Utils::clear('.')
   end
 
 end

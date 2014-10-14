@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'test/unit'
 require '../utils.rb'
 
@@ -21,7 +20,7 @@ class MemoryTests < Utils::SpawnerTester
       exit_success?(rpt)
       assert_in_delta(rpt[Utils::PEAK_MEMORY_USED_FIELD], expected_memory[i][:memory], expected_memory[i][:delta])
     end
-    Utils::clear(Dir.getwd)
+    Utils::clear('.')
   end
 
   def test_memory_limit
@@ -32,7 +31,7 @@ class MemoryTests < Utils::SpawnerTester
       #puts rpt[Utils::MEMORY_LIMIT_FIELD],rpt[Utils::PEAK_MEMORY_USED_FIELD], rpt[Utils::TERMINATE_REASON_FIELD]
       #assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], 'MemoryLimitExceeded')
     end
-    Utils::clear(Dir.getwd)
+    Utils::clear('.')
   end
 
 end

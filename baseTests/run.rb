@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'test/unit'
 require '../utils.rb'
 
@@ -15,7 +14,7 @@ class BaseTests < Utils::SpawnerTester
       assert_in_delta(rprt[Utils::WRITTEN_FIELD], 0, 1e-3)
       assert_in_delta(rprt[Utils::PEAK_MEMORY_USED_FIELD], 0, 3e-1)
     end
-    Utils::clear(Dir.getwd)
+    Utils::clear('.')
   end
 
 end

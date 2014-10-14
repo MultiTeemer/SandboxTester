@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'test/unit'
 require '../utils.rb'
 
@@ -17,7 +16,7 @@ class TimeTests < Utils::SpawnerTester
       rpt = self.run_spawner_test($spawner, i + 1, params[i])
       assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::TIME_LIMIT_EXCEEDED_RESULT)
     end
-    Utils::clear(Dir.getwd)
+    Utils::clear('.')
   end
 
 
