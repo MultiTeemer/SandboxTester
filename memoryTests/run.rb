@@ -34,4 +34,19 @@ class MemoryTests < Utils::SpawnerTester
     Utils::clear('.')
   end
 
+  def test_benchmark
+    Utils::compile_for_test(__method__)
+    rpt = self.run_spawner_test($spawner, 1, { :ml => 4 })
+    puts 'Benchmark:'
+    puts '-' * 30 + "\n"
+    puts 'Malloc/free'
+    puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
+    puts '-' * 30 + "\n"
+    rpt = self.run_spawner_test($spawner, 2, { :ml => 4 })
+    puts 'New[]/delete[]'
+    puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
+    puts '-' * 30 + "\n"
+    Utils::clear('.')
+  end
+
 end
