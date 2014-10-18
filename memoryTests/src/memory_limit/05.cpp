@@ -1,13 +1,9 @@
-#include <cstdlib>
+#include <windows.h>
 
-void foo()
-{
-	malloc(sizeof(int) * 1000);
-	foo();
-}
+static const int size = 1000000;
 
 int main()
 {
-	foo();
+	GlobalAlloc(GMEM_FIXED, sizeof(int) * size);
 	return 0;
 }

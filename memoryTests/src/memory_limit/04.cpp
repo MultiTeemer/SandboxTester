@@ -1,15 +1,7 @@
-#include <cstdlib>
-
-void foo()
-{
-	int a[1000];
-	for (int i = 0; i < 1000; ++i)
-		a[i] = -i;
-	foo();
-}
+static const int size = 1000000;
 
 int main()
 {
-	foo();
+	new int[size];
 	return 0;
 }

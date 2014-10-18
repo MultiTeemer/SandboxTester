@@ -1,9 +1,10 @@
 #include <windows.h>
+#include <cstdlib>
 
 static const int size = 1000000;
 
 int main()
 {
-	LocalAlloc(LMEM_FIXED, sizeof(int) * size);
+	VirtualAlloc(NULL, sizeof(int) * size, MEM_COMMIT, PAGE_EXECUTE);
 	return 0;
 }

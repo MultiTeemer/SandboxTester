@@ -2,7 +2,7 @@
 
 void foo()
 {
-	malloc(sizeof(int) * 1000);
+	int a[100000];
 	foo();
 }
 
