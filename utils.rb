@@ -102,6 +102,14 @@ module Utils
       assert_equal(report[SPAWNER_ERROR_FIELD], '<none>')
     end
 
+    def setup
+      Utils.compile_for_test(self.method_name)
+    end
+
+    def teardown
+      Utils.clear('.')
+    end
+
   end
 
 end

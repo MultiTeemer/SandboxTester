@@ -6,7 +6,6 @@ $spawner = ARGV[0]
 class MemoryTests < Utils::SpawnerTester
 
   def test_successful_allocation
-    Utils::compile_for_test(__method__)
     expected_memory = [
         { :memory => 4, :delta => 1e-1 },
         { :memory => 4, :delta => 1e-1 },
@@ -20,11 +19,9 @@ class MemoryTests < Utils::SpawnerTester
       exit_success?(rpt)
       assert_in_delta(rpt[Utils::PEAK_MEMORY_USED_FIELD], expected_memory[i][:memory], expected_memory[i][:delta])
     end
-    Utils::clear('.')
   end
 
   def test_memory_limit
-    Utils::compile_for_test(__method__)
     memory_limit = [4] * 10 # TODO: figure out
     memory_limit.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1, {:ml => memory_limit[i]})
@@ -34,11 +31,9 @@ class MemoryTests < Utils::SpawnerTester
       puts '-' * 30 + "\n"
       #assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::MEMORY_LIMIT_EXCEEDED_RESULT)
     end
-    Utils::clear('.')
   end
 
   def test_benchmark
-    Utils::compile_for_test(__method__)
     rpt = self.run_spawner_test($spawner, 1, { :ml => 4 })
     puts 'Benchmark:'
     puts '-' * 30 + "\n"
@@ -49,7 +44,6 @@ class MemoryTests < Utils::SpawnerTester
     puts 'New[]/delete[]'
     puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
     puts '-' * 30 + "\n"
-    Utils::clear('.')
   end
 
 end
