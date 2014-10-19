@@ -5,6 +5,14 @@ $spawner = ARGV[0]
 
 class TimeTests < Utils::SpawnerTester
 
+  def test_load_ratio
+    params = [ { :y => 0.3 } ] * 2
+    params.each_index do |i|
+      rpt = self.run_spawner_test($spawner, i + 1, params[i])
+      assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::LOAD_RATIO__RESULT)
+    end
+  end
+
   def test_time_limit
     params = [
         { :tl => 0.5 },

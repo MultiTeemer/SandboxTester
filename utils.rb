@@ -22,6 +22,7 @@ module Utils
   WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
   MEMORY_LIMIT_EXCEEDED_RESULT = 'MemoryLimitExceeded'
   ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExit'
+  LOAD_RATIO__RESULT = 'LoadRatio'
 
   ACCESS_VIOLATION_EXIT_STATUS = 'AccessViolation'
   STACK_OVERFLOW_EXIT_STATUS = 'StackOverflow'
