@@ -53,8 +53,16 @@ module Utils
 		['.', '..', '.idea', '.git'].include? dir
   end
 
-  def self.compile_for_cpp(file, out)
-    system('g++', file, "-o#{out}") unless system_dir?(file)
+  def self.compile(compiler, file, out)
+    system(compiler, file, "-o#{out}") unless system_dir?(file)
+  end
+
+  def self.compile_cpp(file, out)
+    compile('g++', file, out)
+  end
+
+  def self.compile_pascal(file, out)
+    compile('fpc', file, out)
   end
 
   def self.get_dir_name(test_name)
@@ -65,7 +73,12 @@ module Utils
     test_name = get_dir_name(test_name)
     Dir.foreach("src/#{test_name}") do |file|
       unless system_dir?(file)
-        compile_for_cpp("src/#{test_name}/#{file}", "bin/#{file.slice(0, file.length - 4)}.exe")
+        input, output = "src/#{test_name}/#{file}", "bin/#{file.slice(0, file.length - 4)}.exe"
+        if file =~ /\.cpp$/
+          compile_cpp(input, output)
+        elsif file =~ /\.pas$/
+          compile_pascal(input, output)
+        end
       end
     end
   end
