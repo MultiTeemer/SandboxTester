@@ -90,10 +90,10 @@ module Utils
       res
     end
 
-    def run_spawner_test(spawner, test_order, args = {})
+    def run_spawner_test(spawner, test_order, args = {}, argv = [])
       cmd = spawner
       args.each_pair { |k, v| cmd += " -#{k.to_s}:" + v.to_s }
-      cmd += " #{File.absolute_path(Dir.getwd)}/bin/#{sprintf('%02d', test_order)}.exe"
+      cmd += " #{File.absolute_path(Dir.getwd)}/bin/#{sprintf('%02d', test_order)}.exe #{argv.join(' ')}"
       self.class::parse_spawner_report(%x[#{cmd}])
     end
 

@@ -30,16 +30,31 @@ class MemoryTests < Utils::SpawnerTester
   end
 
   def test_benchmark
+    sep = '-' * 30 + "\n"
     rpt = self.run_spawner_test($spawner, 1, { :ml => 4 })
     puts 'Benchmark:'
-    puts '-' * 30 + "\n"
+    puts sep
     puts 'Malloc/free'
     puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
-    puts '-' * 30 + "\n"
+    puts sep
     rpt = self.run_spawner_test($spawner, 2, { :ml => 4 })
     puts 'New[]/delete[]'
     puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
-    puts '-' * 30 + "\n"
+    puts sep
+    puts 'Maximum memory allocation threshold'
+    l, r = 3.0, 5.0
+    delta = 1e-6
+    while (l - r).abs >= delta
+      m = (l + r) / 2
+      rpt = self.run_spawner_test($spawner, 3, { :ml => 4 }, [ m * 2 ** 20 ])
+      if rpt[Utils::TERMINATE_REASON_FIELD] == Utils::MEMORY_LIMIT_EXCEEDED_RESULT
+        r = m
+      else
+        l = m
+      end
+    end
+    puts m
+    puts sep
   end
 
 end
