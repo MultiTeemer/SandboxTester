@@ -28,6 +28,7 @@ module Utils
   INT_DIVIDE_BY_ZERO_EXIT_STATUS = 'IntegerDivideByZero'
   ILLEGAL_INSTRUCTION_EXIT_STATUS = 'IllegalInstruction'
   PRIVILEGED_INSTRUCTION_EXIT_STATUS = 'PrivilegedInstruction'
+  ARRAY_BOUNDS_EXCEEDED_EXIT_STATUS = 'ArrayBoundsExceeded'
 
   REPORT_FIELDS = %i[
         application
