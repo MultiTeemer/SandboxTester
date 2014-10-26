@@ -18,6 +18,7 @@ module Utils
   EXIT_STATUS_FIELD = :exitStatus
   SPAWNER_ERROR_FIELD = :spawnerError
 
+  EXIT_PROCESS_RESULT = 'ExitProcess'
   TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
   WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
   MEMORY_LIMIT_EXCEEDED_RESULT = 'MemoryLimitExceeded'
@@ -112,7 +113,7 @@ module Utils
     end
 
     def exit_success?(report)
-      assert_equal(report[TERMINATE_REASON_FIELD], 'ExitProcess')
+      assert_equal(Utils::EXIT_PROCESS_RESULT, report[TERMINATE_REASON_FIELD])
       assert_equal('0', report[EXIT_STATUS_FIELD])
       assert_equal('<none>', report[SPAWNER_ERROR_FIELD])
     end
