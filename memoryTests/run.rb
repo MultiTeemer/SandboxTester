@@ -17,7 +17,7 @@ class MemoryTests < Utils::SpawnerTester
     expected_memory.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1)
       exit_success?(rpt)
-      assert_in_delta(rpt[Utils::PEAK_MEMORY_USED_FIELD], expected_memory[i][:memory], expected_memory[i][:delta])
+      assert_in_delta(expected_memory[i][:memory], rpt[Utils::PEAK_MEMORY_USED_FIELD], expected_memory[i][:delta])
     end
   end
 
@@ -25,7 +25,7 @@ class MemoryTests < Utils::SpawnerTester
     memory_limit = [4] * 8
     memory_limit.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1, {:ml => memory_limit[i]})
-      assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::MEMORY_LIMIT_EXCEEDED_RESULT)
+      assert_equal(Utils::MEMORY_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD])
     end
   end
 

@@ -9,7 +9,7 @@ class TimeTests < Utils::SpawnerTester
     params = [ { :y => 0.3 } ] * 2
     params.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1, params[i])
-      assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::LOAD_RATIO__RESULT)
+      assert_equal(Utils::LOAD_RATIO__RESULT, rpt[Utils::TERMINATE_REASON_FIELD])
     end
   end
 
@@ -21,7 +21,7 @@ class TimeTests < Utils::SpawnerTester
     ]
     params.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1, params[i])
-      assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::TIME_LIMIT_EXCEEDED_RESULT)
+      assert_equal(Utils::TIME_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD])
     end
   end
 
