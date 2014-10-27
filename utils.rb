@@ -192,13 +192,14 @@ module Utils
       super
       @cmd_arg_val_delim = ':'
       @cmd_args_mapping = {
-          :time_limit => 'tl',
-          :memory_limit => 'ml',
-          :user => 'u',
-          :password => 'p',
-          :input => 'i',
-          :output => 'so',
-          :idleness => 'y',
+          :time_limit => :tl,
+          :memory_limit => :ml,
+          :user => :u,
+          :password => :p,
+          :input => :i,
+          :output => :so,
+          :idleness => :y,
+          :deadline => :d,
       }
     end
 
@@ -218,15 +219,15 @@ module Utils
       super
       @cmd_arg_val_delim = ' '
       @cmd_args_mapping = {
-          :time_limit => 't',
-          :memory_limit => 'm',
-          :user => 'l',
-          :password => 'p',
-          :input => 'i',
-          :output => 'o',
-          :error => 'e',
-          :idleness => 'i',
-          :load_ratio => 'r',
+          :time_limit => :t,
+          :memory_limit => :m,
+          :user => :l,
+          :password => :p,
+          :input => :i,
+          :output => :o,
+          :error => :e,
+          :idleness => :i,
+          :load_ratio => :r,
       }
     end
 
