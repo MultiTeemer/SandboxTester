@@ -132,6 +132,13 @@ module Utils
       Utils.clear
       Dir.chdir('..')
     end
+
+    def aseq(expected, actual, test_order)
+      assert_equal(expected, actual, "Fail on #{test_order + 1}th test")
+    end
+
+    def asindel(expected, actual, delta, test_order)
+      assert_in_delta(expected, actual, delta, "Fail on #{test_order + 1}th test")
     end
 
   end
