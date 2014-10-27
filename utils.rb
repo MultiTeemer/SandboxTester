@@ -108,7 +108,7 @@ module Utils
     def run_spawner_test(spawner, test_order, args = {}, argv = [])
       cmd = spawner
       args.each_pair { |k, v| cmd += " -#{k.to_s}:" + v.to_s }
-      cmd += " #{File.absolute_path(Dir.getwd)}/bin/#{sprintf('%02d', test_order)}.exe #{argv.join(' ')}"
+      cmd += " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe #{argv.join(' ')}"
       self.class::parse_spawner_report(%x[#{cmd}])
     end
 
@@ -119,11 +119,19 @@ module Utils
     end
 
     def setup
+      name = self.class.name
+      dir = name.slice(0, name.length - 5)
+      dir[0] = dir[0].downcase!
+      Dir.chdir("#{dir}Tests/")
       Utils.compile_for_test(self.method_name)
+      Dir.chdir('./bin/')
     end
 
     def teardown
-      Utils.clear('.')
+      Dir.chdir('..')
+      Utils.clear
+      Dir.chdir('..')
+    end
     end
 
   end
