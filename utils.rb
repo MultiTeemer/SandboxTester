@@ -154,4 +154,92 @@ module Utils
 
   end
 
+  class SpawnerWrapper
+
+    protected
+
+    @path
+    @cmd_args_mapping
+    @cmd_arg_val_delim
+
+    def parse_report(rpt)
+
+    end
+
+    public
+
+    def initialize(path)
+      @path = path
+    end
+
+    def run(executable, args = {}, argv = [])
+      cmd = @path
+      args.each { |k, v| cmd += " -#{@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]}#{@cmd_arg_val_delim}#{v}" }
+      cmd += " #{executable} #{argv.join(' ')}"
+      parse_report(%x[#{cmd}])
+    end
+
+  end
+
+  class FefuSpawnerWrapper < SpawnerWrapper
+
+    protected
+
+    def parse_report(rpt)
+      res = {}
+      REPORT_FIELDS.each do |field|
+        rpt =~ /\n#{field}:\s+(.+)(\(\S+\))?\n/i
+        v = $1
+        v = $1.to_f if v =~ /^(\d+\.?\d+)\s?(\S+)?$/
+        res[field.to_sym] = v
+      end
+      res
+    end
+
+    public
+
+    def initialize(path)
+      super
+      @cmd_arg_val_delim = ':'
+      @cmd_args_mapping = {
+          :time_limit => 'tl',
+          :memory_limit => 'ml',
+          :user => 'u',
+          :password => 'p',
+          :input => 'i',
+          :output => 'so',
+          :idleness => 'y',
+      }
+    end
+
+  end
+
+  class PCMS2SpawnerWrapper < SpawnerWrapper
+
+    protected
+
+    def parse_report(rpt)
+
+    end
+
+    public
+
+    def initialize(path)
+      super
+      @cmd_arg_val_delim = ' '
+      @cmd_args_mapping = {
+          :time_limit => 't',
+          :memory_limit => 'm',
+          :user => 'l',
+          :password => 'p',
+          :input => 'i',
+          :output => 'o',
+          :error => 'e',
+          :idleness => 'i',
+          :load_ratio => 'r',
+      }
+    end
+
+  end
+
 end
