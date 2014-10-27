@@ -1,8 +1,13 @@
 #include <cstdlib>
+#include <cstdio>
 
-int main()
+int main(int argc, char* argv[])
 {
-	int* p = (int*) malloc(sizeof(int) * 1000000);
-	free(p);
+	long long limit = atoll(argv[1]);
+
+	printf("%ld", limit);	
+
+	malloc(limit);
+
 	return 0;
 }
