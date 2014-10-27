@@ -56,7 +56,7 @@ module Utils
   end
 
   def self.compile(compiler, file, out)
-    system(compiler, file, "-o#{out}") unless system_dir?(file)
+    system("#{compiler} #{file} -o#{out} 1>nul 2>nul") unless system_dir?(file)
   end
 
   def self.compile_cpp(file, out)
