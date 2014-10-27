@@ -18,8 +18,8 @@ class ExitStatusTests < Utils::SpawnerTester
     ]
     statuses.each_index do |i|
       rpt = self.run_spawner_test($spawner, i + 1)
-      assert_equal(rpt[Utils::EXIT_STATUS_FIELD], statuses[i])
-      assert_equal(rpt[Utils::TERMINATE_REASON_FIELD], Utils::ABNORMAL_EXIT_PROCESS_RESULT)
+      aseq(rpt[Utils::EXIT_STATUS_FIELD], statuses[i], i)
+      aseq(rpt[Utils::TERMINATE_REASON_FIELD], Utils::ABNORMAL_EXIT_PROCESS_RESULT, i)
     end
   end
 
