@@ -33,7 +33,7 @@ tests_tags.each { |tag| options[:tests][tag.to_sym] = true  } if options[:tests]
 
 exit 0 if options[:path].nil?
 
-Utils.spawner = options[:path]
+Utils.init_spawner(options[:type], options[:path])
 
 test_suit = Test::Unit::TestSuite.new("Testing #{options[:path]}")
 

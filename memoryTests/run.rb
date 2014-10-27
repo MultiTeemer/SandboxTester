@@ -35,7 +35,7 @@ class MemoryTests < Utils::SpawnerTester
     delta = 1e-6
     while (l - r).abs >= delta
       m = (l + r) / 2
-      rpt = self.run_spawner_test(1, { :ml => 4 }, [ m * 2 ** 20 ])
+      rpt = self.run_spawner_test(1, { :memory_limit => 4 }, [ m * 2 ** 20 ])
       if rpt[Utils::TERMINATE_REASON_FIELD] == Utils::MEMORY_LIMIT_EXCEEDED_RESULT
         r = m
       else

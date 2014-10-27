@@ -97,30 +97,20 @@ module Utils
     @spawner
   end
 
-  def self.spawner=(val)
-    @spawner = val
+  def self.init_spawner(type, path)
+    @spawner = (case type
+      when 'fefu' then FefuSpawnerWrapper
+      when 'pcms2' then PCMS2SpawnerWrapper
+    end).new(path)
   end
 
   class SpawnerTester < Test::Unit::TestCase
 
     public
 
-    def self.parse_spawner_report(report)
-      res = {}
-      REPORT_FIELDS.each do |field|
-        report =~ /\n#{field}:\s+(.+)(\(\S+\))?\n/i
-        v = $1
-        v = $1.to_f if v =~ /^(\d+\.?\d+)\s?(\S+)?$/
-        res[field.to_sym] = v
-      end
-      res
-    end
-
     def run_spawner_test(test_order, args = {}, argv = [])
-      cmd = Utils.spawner
-      args.each_pair { |k, v| cmd += " -#{k.to_s}:" + v.to_s }
-      cmd += " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe #{argv.join(' ')}"
-      self.class::parse_spawner_report(%x[#{cmd}])
+      file = " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe"
+      Utils.spawner.run(file, args, argv)
     end
 
     def exit_success?(report)

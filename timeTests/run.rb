@@ -5,8 +5,8 @@ class TimeTests < Utils::SpawnerTester
 
   def test_load_ratio
     params = [
-        { :y => 0.3 },
-        { :y => 0.5, :tl => 1 },
+        { :idleness => 0.3 },
+        { :idleness => 0.5, :time_limit => 1 },
     ]
     params.each_index do |i|
       rpt = self.run_spawner_test(i + 1, params[i])
@@ -16,9 +16,9 @@ class TimeTests < Utils::SpawnerTester
 
   def test_time_limit
     params = [
-        { :tl => 0.5 },
-        { :d => 0.5 },
-        { :d => 0.3 },
+        { :time_limit => 0.5 },
+        { :deadline => 0.5 },
+        { :deadline => 0.3 },
     ]
     params.each_index do |i|
       rpt = self.run_spawner_test(i + 1, params[i])
