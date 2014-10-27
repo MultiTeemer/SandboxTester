@@ -29,13 +29,7 @@ OptionParser.new do |opts|
 end.parse!
 
 options[:type] = 'fefu' if options[:type].nil?
-options[:tests] = {
-    :base => true,
-    :exitStatus => true,
-    :memory => true,
-    :time => true,
-    :write => true,
-} if options[:tests].size == 0
+tests_tags.each { |tag| options[:tests][tag.to_sym] = true  } if options[:tests].size == 0
 
 exit 0 if options[:path].nil?
 
