@@ -1,7 +1,5 @@
 require 'test/unit'
-require '../utils.rb'
-
-$spawner = ARGV[0]
+require './utils.rb'
 
 class MemoryTests < Utils::SpawnerTester
 
@@ -15,7 +13,7 @@ class MemoryTests < Utils::SpawnerTester
         { :memory => 2000, :delta => 5}
     ]
     expected_memory.each_index do |i|
-      rpt = self.run_spawner_test($spawner, i + 1)
+      rpt = self.run_spawner_test(i + 1)
       exit_success?(rpt)
       asindel(expected_memory[i][:memory], rpt[Utils::PEAK_MEMORY_USED_FIELD], expected_memory[i][:delta], i)
     end
@@ -24,20 +22,20 @@ class MemoryTests < Utils::SpawnerTester
   def test_memory_limit
     memory_limit = [4] * 8
     memory_limit.each_index do |i|
-      rpt = self.run_spawner_test($spawner, i + 1, {:ml => memory_limit[i]})
+      rpt = self.run_spawner_test(i + 1, {:ml => memory_limit[i]})
       aseq(Utils::MEMORY_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], i)
     end
   end
 
   def test_benchmark
     sep = '-' * 30 + "\n"
-    rpt = self.run_spawner_test($spawner, 1, { :ml => 4 })
+    rpt = self.run_spawner_test(1, { :ml => 4 })
     puts 'Benchmark:'
     puts sep
     puts 'Malloc/free'
     puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
     puts sep
-    rpt = self.run_spawner_test($spawner, 2, { :ml => 4 })
+    rpt = self.run_spawner_test(2, { :ml => 4 })
     puts 'New[]/delete[]'
     puts "Terminate reason: #{rpt[Utils::TERMINATE_REASON_FIELD]}"
     puts sep
@@ -46,7 +44,7 @@ class MemoryTests < Utils::SpawnerTester
     delta = 1e-6
     while (l - r).abs >= delta
       m = (l + r) / 2
-      rpt = self.run_spawner_test($spawner, 3, { :ml => 4 }, [ m * 2 ** 20 ])
+      rpt = self.run_spawner_test(3, { :ml => 4 }, [ m * 2 ** 20 ])
       if rpt[Utils::TERMINATE_REASON_FIELD] == Utils::MEMORY_LIMIT_EXCEEDED_RESULT
         r = m
       else

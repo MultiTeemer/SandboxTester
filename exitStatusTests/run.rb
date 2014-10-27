@@ -1,7 +1,5 @@
 require 'test/unit'
-require '../utils.rb'
-
-$spawner = ARGV[0]
+require './utils.rb'
 
 class ExitStatusTests < Utils::SpawnerTester
 
@@ -17,7 +15,7 @@ class ExitStatusTests < Utils::SpawnerTester
       Utils::ACCESS_VIOLATION_EXIT_STATUS,
     ]
     statuses.each_index do |i|
-      rpt = self.run_spawner_test($spawner, i + 1)
+      rpt = self.run_spawner_test(i + 1)
       aseq(rpt[Utils::EXIT_STATUS_FIELD], statuses[i], i)
       aseq(rpt[Utils::TERMINATE_REASON_FIELD], Utils::ABNORMAL_EXIT_PROCESS_RESULT, i)
     end

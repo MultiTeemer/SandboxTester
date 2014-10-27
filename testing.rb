@@ -1,19 +1,65 @@
 require 'fileutils'
+require 'test/unit'
+require 'test/unit/ui/console/testrunner'
 require 'optparse'
 require './utils.rb'
 
-spawner = ARGV[0] # TODO: use optparse for retrieving command line args
+tests_tags = %w[ base exitStatus memory time write ]
 
-if spawner == nil
-    puts 'no spawner provided for testing'
-    exit(0)
-end
+tests_tags.each { |tag| require "./#{tag}Tests/run.rb" }
 
-Dir.foreach('.') do |item|
-    if File.exists?("#{item}/run.rb")
-        Dir.chdir(item)
-        system('ruby', 'run.rb', spawner)
-        Dir.chdir('..')
+options = {
+    :tests => {},
+}
+
+OptionParser.new do |opts|
+
+  tests_tags.each do |tag|
+    opts.on("--#{tag}", "--#{tag}[=OPTIONAL]", "Run test for #{tag}") do |m|
+      options[:tests][tag.to_sym] = m.nil? ? true : m.split(',')
     end
+  end
+
+  opts.on('--path=MANDATORY', '', 'Path to testing item') { |path| options[:path] = path }
+
+  opts.on('--type=MANDATORY', '', 'Type of testing item') do |type|
+    options[:type] = type if %w[ fefu fefu_old pcms2 ].include? type
+  end
+
+end.parse!
+
+options[:type] = 'fefu' if options[:type].nil?
+options[:tests] = {
+    :base => true,
+    :exitStatus => true,
+    :memory => true,
+    :time => true,
+    :write => true,
+} if options[:tests].size == 0
+
+exit 0 if options[:path].nil?
+
+Utils.spawner = options[:path]
+
+test_suit = Test::Unit::TestSuite.new("Testing #{options[:path]}")
+
+options[:tests].each do |tag, cat|
+
+  name = tag.to_s
+
+  if cat.kind_of?(Array)
+    tests_names = cat
+  else
+    tests_names = Dir.entries("#{name}Tests/src/") - %w[ . .. ]
+  end
+
+  class_name = name
+  class_name[0] = name[0].upcase
+
+  tests_names.each do |test_name|
+    test_suit << Object.const_get("#{class_name}Tests").new("test_#{test_name}")
+  end
+
 end
 
+Test::Unit::UI::Console::TestRunner.run(test_suit)
