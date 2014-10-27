@@ -51,7 +51,7 @@ module Utils
     ]
 
 	def self.system_dir?(dir)
-		['.', '..', '.idea', '.git'].include? dir
+		%w[ . .. .idea .git ].include? dir
   end
 
   def self.compile(compiler, file, out)
