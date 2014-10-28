@@ -108,8 +108,8 @@ module Utils
 
     public
 
-    def run_spawner_test(test_order, args = {}, argv = [])
-      file = " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe"
+    def run_spawner_test(test_order = nil, args = {}, argv = [])
+      file = " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe" unless test_order.nil?
       Utils.spawner.run(file, args, argv)
     end
 
