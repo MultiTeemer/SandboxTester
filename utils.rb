@@ -101,7 +101,7 @@ module Utils
 
   def self.init_spawner(type, path)
     @spawner = (case type
-      when 'fefu' then FefuSpawnerWrapper
+      when 'cats' then CatsSpawnerWrapper
       when 'pcms2' then PCMS2SpawnerWrapper
     end).new(path)
   end
@@ -177,7 +177,7 @@ module Utils
 
   end
 
-  class FefuSpawnerWrapper < SpawnerWrapper
+  class CatsSpawnerWrapper < SpawnerWrapper
 
     private
 

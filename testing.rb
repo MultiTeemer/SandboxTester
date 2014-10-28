@@ -23,12 +23,12 @@ OptionParser.new do |opts|
   opts.on('--path=MANDATORY', '', 'Path to testing item') { |path| options[:path] = path }
 
   opts.on('--type=MANDATORY', '', 'Type of testing item') do |type|
-    options[:type] = type if %w[ fefu fefu_old pcms2 ].include? type
+    options[:type] = type if %w[ cats cats_old pcms2 ].include? type
   end
 
 end.parse!
 
-options[:type] = 'fefu' if options[:type].nil?
+options[:type] = 'cats' if options[:type].nil?
 tests_tags.each { |tag| options[:tests][tag.to_sym] = true  } if options[:tests].size == 0
 
 exit 0 if options[:path].nil?
