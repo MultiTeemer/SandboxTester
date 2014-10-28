@@ -202,6 +202,8 @@ module Utils
           :output => :so,
           :idleness => :y,
           :deadline => :d,
+          :load_ratio => :lr,
+          :error => :se,
       }
     end
 
