@@ -33,6 +33,8 @@ module Utils
   PRIVILEGED_INSTRUCTION_EXIT_STATUS = 'PrivilegedInstruction'
   ARRAY_BOUNDS_EXCEEDED_EXIT_STATUS = 'ArrayBoundsExceeded'
 
+  NONE_ERROR_SP_ERROR = '<none>'
+
   REPORT_FIELDS = %i[
         application
         parameters
