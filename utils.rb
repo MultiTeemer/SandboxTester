@@ -153,12 +153,16 @@ module Utils
     @path
     @cmd_args_mapping
     @cmd_arg_val_delim
+    @cmd_args
+    @cmd_args_multipliers
 
     def parse_report(rpt)
 
     end
 
     public
+
+    attr_reader :cmd_args, :cmd_args_multipliers
 
     def initialize(path)
       @path = path
@@ -174,6 +178,15 @@ module Utils
   end
 
   class FefuSpawnerWrapper < SpawnerWrapper
+
+    private
+
+    def add_degrees(units)
+      degrees = %w[ da h k Ki M Mi G Gi T Ti P Pi d c m u n p f ]
+      res = []
+      units.each { |unit| degrees.each { |degree| res.push(degree + unit) } }
+      res
+    end
 
     protected
 
@@ -205,6 +218,11 @@ module Utils
           :load_ratio => :lr,
           :error => :se,
       }
+      @cmd_args = %w[ ml tl d wl u p runas s hr ho sr so i lr sl wd ]
+      @cmd_args_multipliers = {
+          :memory_limit => add_degrees(%w[ B b ]),
+          :time_limit => add_degrees(%w[ s m h d ]),
+      }
     end
 
   end
@@ -232,6 +250,11 @@ module Utils
           :error => :e,
           :idleness => :i,
           :load_ratio => :r,
+      }
+      @cmd_args = %w[]
+      @cmd_args_multipliers = {
+          :memory_limit => %w[ K M ],
+          :time_limit => %w[ s ms ],
       }
     end
 
