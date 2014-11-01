@@ -108,6 +108,13 @@ module Utils
 
   class SpawnerTester < Test::Unit::TestCase
 
+    protected
+
+    def tests_count
+      count = Dir.entries('.').size - 2
+      (1..count)
+    end
+
     public
 
     def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
