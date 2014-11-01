@@ -81,4 +81,22 @@ class CmdArgsTests < Utils::SpawnerTester
     end
   end
 
+  def test_flags_args_combinations
+    args, flags = Utils.spawner.cmd_args, Utils.spawner.cmd_flags
+    stuff.each do |item|
+      (0..args.size).each do |args_count|
+        args.combination(args_count).each do |args_arr|
+          run_args, error_args = {}, {}
+          args_arr.each { |arg| run_args[arg.to_sym], error_args[arg.to_sym] = 1, 'something_wrong' }
+          (0..flags.size).each do |flags_count|
+            flags.combination(flags_count).each do |run_flags|
+              item[:func].call(run_spawner_test(item[:order], run_args, run_flags))
+              error_on_execute?(run_spawner_test(item[:order], error_args, run_flags))
+            end
+          end
+        end
+      end
+    end
+  end
+
 end
