@@ -23,7 +23,7 @@ class CmdArgsTests < Utils::SpawnerTester
   def test_args_combinations
     args = Utils.spawner.cmd_args
     [1, nil].each do |test_order|
-      (1..args.size).each do |length|
+      (0..args.size).each do |length|
         args.combination(length).each do |combination|
           args = {}
           combination.each { |k| args[k] = 'something_wrong' }
@@ -31,8 +31,6 @@ class CmdArgsTests < Utils::SpawnerTester
         end
       end
     end
-
-    error_on_execute?(run_spawner_test)
   end
 
   def test_args_multipliers
