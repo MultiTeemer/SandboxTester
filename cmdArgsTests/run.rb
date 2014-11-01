@@ -61,8 +61,8 @@ class CmdArgsTests < Utils::SpawnerTester
     flags = Utils.spawner.cmd_flags
     stuff.each do |item|
       (0..flags.size).each do |length|
-        flags.combination(length).each do |flags|
-          item[:func].call(run_spawner_test(item[:order], {}, flags))
+        flags.combination(length).each do |run_flags|
+          item[:func].call(run_spawner_test(item[:order], {}, run_flags))
         end
       end
     end
@@ -72,9 +72,9 @@ class CmdArgsTests < Utils::SpawnerTester
     flags = Utils.spawner.cmd_flags
     [1, nil].each do |test_order|
       (0..flags.size).each do |length|
-        flags.combination(length).each do |flags|
+        flags.combination(length).each do |run_flags|
           args = {}
-          flags.each { |flag| args[flag.to_sym] = 1 }
+          run_flags.each { |flag| args[flag.to_sym] = 1 }
           error_on_execute?(run_spawner_test(test_order, args))
         end
       end
