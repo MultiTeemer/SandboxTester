@@ -67,4 +67,17 @@ class CmdArgsTests < Utils::SpawnerTester
     end
   end
 
+  def test_flags_as_args #TODO: hide spawner output
+    flags = Utils.spawner.cmd_flags
+    [1, nil].each do |test_order|
+      (0..flags.size).each do |length|
+        flags.combination(length).each do |flags|
+          args = {}
+          flags.each { |flag| args[flag.to_sym] = 1 }
+          error_on_execute?(run_spawner_test(test_order, args))
+        end
+      end
+    end
+  end
+
 end
