@@ -35,12 +35,13 @@ class CmdArgsTests < Utils::SpawnerTester
 
   def test_args_combinations
     args = Utils.spawner.cmd_args
-    [1, nil].each do |test_order|
+    stuff.each do |item|
       (0..args.size).each do |length|
         args.combination(length).each do |combination|
-          args = {}
-          combination.each { |k| args[k] = 'something_wrong' }
-          error_on_execute?(run_spawner_test(test_order, args), length)
+          correct_args, wrong_args = {}, {}
+          combination.each { |k| correct_args[k], wrong_args[k] = 1, 'something_wrong' }
+          item[:func].call(run_spawner_test(item[:order], correct_args), length)
+          error_on_execute?(run_spawner_test(item[:order], wrong_args))
         end
       end
     end
