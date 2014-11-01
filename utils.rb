@@ -223,10 +223,10 @@ module Utils
           :password => :p,
           :input => :i,
           :output => :so,
+          :error => :se,
           :idleness => :y,
           :deadline => :d,
           :load_ratio => :lr,
-          :error => :se,
       }
       @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd ]
       @cmd_flags = %w[ ho sw ] #TODO: hide report workaround
