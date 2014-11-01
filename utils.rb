@@ -110,9 +110,9 @@ module Utils
 
     public
 
-    def run_spawner_test(test_order = nil, args = {}, argv = [])
+    def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
       file = " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe" unless test_order.nil?
-      Utils.spawner.run(file, args, argv)
+      Utils.spawner.run(file, args, flags, argv)
     end
 
     def exit_success?(report)
@@ -155,6 +155,7 @@ module Utils
     @cmd_arg_val_delim
     @cmd_args
     @cmd_args_multipliers
+    @cmd_flags
 
     def parse_report(rpt)
 
@@ -162,16 +163,18 @@ module Utils
 
     public
 
-    attr_reader :cmd_args, :cmd_args_multipliers
+    attr_reader :cmd_args,
+                :cmd_args_multipliers,
+                :cmd_flags
 
     def initialize(path)
       @path = path
     end
 
-    def run(executable, args = {}, argv = [])
+    def run(executable, args = {}, flags = [], argv = [])
       cmd = @path
       args.each { |k, v| cmd += " -#{@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]}#{@cmd_arg_val_delim}#{v}" }
-      cmd += " #{executable} #{argv.join(' ')}"
+      cmd += " #{flags.map{ |el| '-' + el }.join(' ')} #{executable} #{argv.join(' ')}"
       parse_report(%x[#{cmd}])
     end
 
