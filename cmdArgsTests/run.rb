@@ -18,6 +18,19 @@ class CmdArgsTests < Utils::SpawnerTester
     compare_with_none_error(true, rpt, test_order)
   end
 
+  def stuff
+    [
+        {
+            :order => 1,
+            :func => Proc.new { |rpt| execute_success?(rpt) },
+        },
+        {
+            :order => nil,
+            :func => Proc.new { |rpt| error_on_execute?(rpt) },
+        },
+    ]
+  end
+
   public
 
   def test_args_combinations
@@ -34,16 +47,6 @@ class CmdArgsTests < Utils::SpawnerTester
   end
 
   def test_args_multipliers
-    stuff = [
-        {
-            :order => 1,
-            :func => Proc.new { |rpt| execute_success?(rpt) },
-        },
-        {
-            :order => nil,
-            :func => Proc.new { |rpt| error_on_execute?(rpt) },
-        },
-    ]
     stuff.each do |item|
       Utils.spawner.cmd_args_multipliers.each do |cat, arr|
         arr.push('').each do |mult|
