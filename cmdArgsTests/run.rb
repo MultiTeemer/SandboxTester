@@ -60,8 +60,8 @@ class CmdArgsTests < Utils::SpawnerTester
     flags = Utils.spawner.cmd_flags
     stuff.each do |item|
       (0..flags.size).each do |length|
-        flags.combination(length).each do |combination|
-          item[:func].call(run_spawner_test(item[:order], {}, combination))
+        flags.combination(length).each do |flags|
+          item[:func].call(run_spawner_test(item[:order], {}, flags))
         end
       end
     end
