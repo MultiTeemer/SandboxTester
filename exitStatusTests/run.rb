@@ -16,10 +16,10 @@ class ExitStatusTests < Utils::SpawnerTester
       Utils::ACCESS_VIOLATION_EXIT_STATUS,
       Utils::ACCESS_VIOLATION_EXIT_STATUS,
     ]
-    statuses.each_index do |i|
-      rpt = self.run_spawner_test(i + 1)
-      aseq(rpt[Utils::EXIT_STATUS_FIELD], statuses[i], i)
-      aseq(rpt[Utils::TERMINATE_REASON_FIELD], Utils::ABNORMAL_EXIT_PROCESS_RESULT, i)
+    tests_count.each do |i|
+      rpt = self.run_spawner_test(i)
+      aseq(rpt[Utils::TERMINATE_REASON_FIELD], Utils::ABNORMAL_EXIT_PROCESS_RESULT, i - 1)
+      aseq(rpt[Utils::EXIT_STATUS_FIELD], statuses[i - 1], i - 1) if i - 1 < statuses.size
     end
   end
 
