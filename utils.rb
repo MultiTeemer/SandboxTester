@@ -244,7 +244,36 @@ module Utils
     protected
 
     def parse_report(rpt)
-
+      res = {}
+      if rpt =~ /^running/i
+        rpt =~ /^\s*time consumed:\s+([0-9]+\.[0-9]+)(.*)$/i
+        res[Utils::USER_TIME_FIELD] = $1.to_f
+        rpt =~ /^\s*peak memory:\s+([0-9]+)(.*)$/i
+        res[Utils::PEAK_MEMORY_USED_FIELD] = $1.to_f / 2 ** 20
+        if rpt =~ /crash/i
+          rpt =~ /crash\s+([_a-z]+)\s+/i
+          error_msg = $1.to_s
+          res[Utils::EXIT_STATUS_FIELD] = case error_msg
+            when 'EXCEPTION_ACCESS_VIOLATION' then Utils::ACCESS_VIOLATION_EXIT_STATUS
+            else nil
+          end
+          res[Utils::TERMINATE_REASON_FIELD] = Utils::ABNORMAL_EXIT_PROCESS_RESULT
+        elsif rpt =~ /program successfully terminated/i
+          res[Utils::TERMINATE_REASON_FIELD] = Utils::EXIT_PROCESS_RESULT
+          res[Utils::EXIT_STATUS_FIELD] = '0'
+          res[Utils::SPAWNER_ERROR_FIELD] = Utils::NONE_ERROR_SP_ERROR
+        else
+          rpt =~ /to terminate...\s+([ a-z]+)\s+/i
+          exit_status_msg = $1.to_s.downcase
+          res[Utils::SPAWNER_ERROR_FIELD] = Utils::NONE_ERROR_SP_ERROR
+          res[Utils::TERMINATE_REASON_FIELD] = case exit_status_msg
+            when 'memory limit exceeded' then Utils::MEMORY_LIMIT_EXCEEDED_RESULT
+            when 'time limit exceeded' then Utils::TIME_LIMIT_EXCEEDED_RESULT
+            else res[Utils::SPAWNER_ERROR_FIELD] = nil
+            end
+        end
+      end
+      res
     end
 
     public
