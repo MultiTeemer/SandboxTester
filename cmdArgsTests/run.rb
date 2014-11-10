@@ -41,6 +41,7 @@ class CmdArgsTests < Utils::SpawnerTester
           combination.each { |k| correct_args[k], wrong_args[k] = 1, 'something_wrong' }
           item[:func].call(run_spawner_test(item[:order], correct_args), length)
           error_on_execute?(run_spawner_test(item[:order], wrong_args))
+          error_on_execute?(run_spawner_test(item[:order], wrong_args)) if wrong_args.size > 0
         end
       end
     end
@@ -74,7 +75,7 @@ class CmdArgsTests < Utils::SpawnerTester
         flags.combination(length).each do |run_flags|
           args = {}
           run_flags.each { |flag| args[flag.to_sym] = 1 }
-          error_on_execute?(run_spawner_test(test_order, args))
+          error_on_execute?(run_spawner_test(test_order, args)) if test_order.nil? or args.size > 0
         end
       end
     end
@@ -90,7 +91,7 @@ class CmdArgsTests < Utils::SpawnerTester
           (0..flags.size).each do |flags_count|
             flags.combination(flags_count).each do |run_flags|
               item[:func].call(run_spawner_test(item[:order], run_args, run_flags))
-              error_on_execute?(run_spawner_test(item[:order], error_args, run_flags))
+              error_on_execute?(run_spawner_test(item[:order], error_args, run_flags)) if error_args.size > 0
             end
           end
         end
