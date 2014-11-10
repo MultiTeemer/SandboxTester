@@ -6,7 +6,6 @@ class CmdArgsTests < Utils::SpawnerTester
   private
 
   def compare_with_none_error(expected, rpt, test_order)
-    puts rpt if expected != (rpt[Utils::SPAWNER_ERROR_FIELD] == Utils::NONE_ERROR_SP_ERROR)
     aseq(expected, rpt[Utils::SPAWNER_ERROR_FIELD] == Utils::NONE_ERROR_SP_ERROR, test_order)
   end
 
