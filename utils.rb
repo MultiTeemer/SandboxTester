@@ -264,7 +264,8 @@ module Utils
           :load_ratio => :r,
           :directory => :d,
       }
-      @cmd_args = %w[]
+      @cmd_args = %w[ t m r y d l p i o e s D ]
+      @cmd_flags = %w[ x q w 1 ]
       @cmd_args_multipliers = {
           :memory_limit => %w[ K M ],
           :time_limit => %w[ s ms ],
