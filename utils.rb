@@ -227,6 +227,7 @@ module Utils
           :idleness => :y,
           :deadline => :d,
           :load_ratio => :lr,
+          :directory => :wd,
       }
       @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd ]
       @cmd_flags = %w[ ho sw ] #TODO: hide report workaround
@@ -261,6 +262,7 @@ module Utils
           :error => :e,
           :idleness => :i,
           :load_ratio => :r,
+          :directory => :d,
       }
       @cmd_args = %w[]
       @cmd_args_multipliers = {
