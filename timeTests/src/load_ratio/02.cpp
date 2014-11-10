@@ -2,7 +2,7 @@
 
 int main()
 {
-	FILE* out = fopen("bin/output.txt", "w");
+	FILE* out = fopen("output.txt", "w");
 
 	while (1)
 		fprintf(out, "abcd");
