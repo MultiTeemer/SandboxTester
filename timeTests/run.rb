@@ -21,5 +21,11 @@ class TimeTests < Utils::SpawnerTester
     end
   end
 
+  def test_deadline
+    params = [ { :deadline => 1 } ] * 3
+    params.each_index do |i|
+      aseq(Utils::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Utils::TERMINATE_REASON_FIELD], i)
+    end
+  end
 
 end
