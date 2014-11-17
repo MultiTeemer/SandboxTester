@@ -1,3 +1,4 @@
+#include <ctime>
 #include <cstdlib>
 
 void foo()
@@ -8,5 +9,10 @@ void foo()
 int main()
 {
     foo();
+	
+	clock_t goal = 500 + clock();
+
+	while (goal > clock());
+    
     return 0;
 }
