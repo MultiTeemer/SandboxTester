@@ -317,6 +317,7 @@ module Utils
           :idleness => :y,
           :load_ratio => :r,
           :directory => :d,
+          :store_in_file => :s,
       }
       @cmd_args = %w[ t m r y d l p i o e s D ]
       @cmd_flags = %w[ x q w 1 ]
