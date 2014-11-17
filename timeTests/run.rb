@@ -4,6 +4,7 @@ require './utils.rb'
 class TimeTests < Utils::SpawnerTester
 
   def test_idleness
+    params = [ { :idleness => 0.5, :time_limit => 3 } ] * 2
     params.each_index do |i|
       aseq(Utils::IDLENESS_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Utils::TERMINATE_REASON_FIELD], i)
     end
