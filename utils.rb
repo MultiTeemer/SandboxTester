@@ -328,28 +328,21 @@ module Utils
     end
 
     def get_correct_value_for(arg)
-      if arg_for_property?(:load_ratio, arg)
-        0.5
-      elsif arg_for_property?(:directory, arg)
-        '.'
-      elsif arg_for_property?(%i[input output error], arg)
-        @tmp_file_name
-      else
-        1
+      case true
+        when arg_for_property?(:load_ratio, arg) then 0.5
+        when arg_for_property?(:directory, arg) then '.'
+        when arg_for_property?(%i[input output error], arg) then @tmp_file_name
+        else 1
       end
     end
 
     def get_wrong_value_for(arg)
-      if arg_for_property?(%i[input output error store_in_file], arg)
-        '"L:\Some\Unknown\Folder\On\Not\Existing\HDD"'
-      elsif arg_for_property?(:load_ratio, arg)
-        1
-      elsif arg_for_property?(%i[time_limit idleness], arg)
-        0.5
-      elsif arg_for_property?(:directory, arg)
-        nil
-      else
-        'something_wrong'
+      case true
+        when arg_for_property?(%i[input output error store_in_file], arg) then '"L:\Some\Unknown\Folder\On\Not\Existing\HDD"'
+        when arg_for_property?(:load_ratio, arg) then 1
+        when arg_for_property?(%i[time_limit idleness], arg) then 0.5
+        when arg_for_property?(:directory, arg) then nil
+        else 'something_wrong'
       end
     end
 
