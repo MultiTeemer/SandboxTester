@@ -3,15 +3,15 @@ require './utils.rb'
 
 class TimeTests < Utils::SpawnerTester
 
-  def test_load_ratio
-    params = [
-        { :idleness => 0.3 },
-        { :idleness => 0.5, :time_limit => 1 },
-    ]
+  def test_idleness
     params.each_index do |i|
       rpt = self.run_spawner_test(i + 1, params[i])
       aseq(Utils::LOAD_RATIO_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], i)
     end
+  end
+
+  def test_load_ratio
+
   end
 
   def test_time_limit
