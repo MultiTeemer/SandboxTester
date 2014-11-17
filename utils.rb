@@ -163,6 +163,7 @@ module Utils
     @cmd_args
     @cmd_args_multipliers
     @cmd_flags
+    @tmp_file_name
 
     def parse_report(rpt)
 
@@ -172,10 +173,12 @@ module Utils
 
     attr_reader :cmd_args,
                 :cmd_args_multipliers,
-                :cmd_flags
+                :cmd_flags,
+                :tmp_file_name
 
     def initialize(path)
       @path = path
+      @tmp_file_name = 'tmp.txt'
     end
 
     def run(executable, args = {}, flags = [], argv = [])
