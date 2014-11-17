@@ -329,6 +329,12 @@ module Utils
       }
     end
 
+    def run(executable, args = {}, flags = [], argv = [])
+      args[:load_ratio] = 0.50 if !args[:idleness].nil? and args[:load_ratio].nil?
+      args[:idleness] = (args[:idleness] * 1000).to_i.to_s + 'ms'
+      super
+    end
+
     def get_correct_value_for(arg)
       case true
         when arg_for_property?(:load_ratio, arg) then 0.5
