@@ -29,7 +29,12 @@ class MemoryTests < Utils::SpawnerTester
 
   def test_benchmark
     sep = '-' * 30 + "\n"
+
     puts sep
+    puts 'Sandbox memory overhead'
+    puts self.run_spawner_test(2)[Utils::PEAK_MEMORY_USED_FIELD]
+    puts sep
+
     puts 'Maximum memory allocation threshold'
     l, r = 3.0, 5.0
     delta = 1e-6
