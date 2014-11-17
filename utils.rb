@@ -319,8 +319,8 @@ module Utils
           :directory => :d,
           :store_in_file => :s,
       }
-      @cmd_args = %w[ t m r y d l p i o e s D ]
-      @cmd_flags = %w[ x q w 1 ]
+      @cmd_args = %w[ t m r y d i o e s D ] #l p
+      @cmd_flags = %w[ x w 1 ] # q
       @cmd_args_multipliers = {
           :memory_limit => %w[ K M ],
           :time_limit => %w[ s ms ],
