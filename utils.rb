@@ -267,6 +267,12 @@ module Utils
 
   class PCMS2SpawnerWrapper < SpawnerWrapper
 
+    private
+
+    def fractional_s_to_ms(secs)
+      (secs * 1000).to_i.to_s
+    end
+
     protected
 
     def parse_report(rpt)
@@ -331,7 +337,8 @@ module Utils
 
     def run(executable, args = {}, flags = [], argv = [])
       args[:load_ratio] = 0.50 if !args[:idleness].nil? and args[:load_ratio].nil?
-      args[:idleness] = (args[:idleness] * 1000).to_i.to_s + 'ms'
+      args[:idleness] = fractional_s_to_ms(args[:idleness]) + 'ms' if args[:idleness]
+      args[:time_limit] = fractional_s_to_ms(args[:time_limit]) if args[:time_limit]
       super
     end
 
