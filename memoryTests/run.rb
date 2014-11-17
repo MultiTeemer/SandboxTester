@@ -13,7 +13,7 @@ class MemoryTests < Utils::SpawnerTester
         { :memory => 2000, :delta => 5}
     ]
     expected_memory.each_index do |i|
-      rpt = self.run_spawner_test(i + 1)
+      rpt = run_spawner_test(i + 1)
       exit_success?(rpt)
       asindel(expected_memory[i][:memory], rpt[Utils::PEAK_MEMORY_USED_FIELD], expected_memory[i][:delta], i)
     end
@@ -22,7 +22,7 @@ class MemoryTests < Utils::SpawnerTester
   def test_memory_limit
     memory_limit = [4] * 12
     memory_limit.each_index do |i|
-      rpt = self.run_spawner_test(i + 1, { :memory_limit => memory_limit[i] })
+      rpt = run_spawner_test(i + 1, { :memory_limit => memory_limit[i] })
       aseq(Utils::MEMORY_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], i)
     end
   end
@@ -32,7 +32,7 @@ class MemoryTests < Utils::SpawnerTester
 
     puts sep
     puts 'Sandbox memory overhead'
-    puts self.run_spawner_test(2)[Utils::PEAK_MEMORY_USED_FIELD]
+    puts run_spawner_test(2)[Utils::PEAK_MEMORY_USED_FIELD]
     puts sep
 
     puts 'Maximum memory allocation threshold'
@@ -40,7 +40,7 @@ class MemoryTests < Utils::SpawnerTester
     delta = 1e-6
     while (l - r).abs >= delta
       m = (l + r) / 2
-      rpt = self.run_spawner_test(1, { :memory_limit => 4 }, [], [ m * 2 ** 20 ])
+      rpt = run_spawner_test(1, { :memory_limit => 4 }, [], [ m * 2 ** 20 ])
       if rpt[Utils::TERMINATE_REASON_FIELD] == Utils::MEMORY_LIMIT_EXCEEDED_RESULT
         r = m
       else
