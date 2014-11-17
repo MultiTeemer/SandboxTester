@@ -169,6 +169,12 @@ module Utils
 
     end
 
+    def arg_for_property?(properties, arg)
+      properties = [properties] unless properties.kind_of? Array
+      properties.each { |property| return true if arg.to_s === @cmd_args_mapping[property].to_s }
+      false
+    end
+
     public
 
     attr_reader :cmd_args,
@@ -186,6 +192,14 @@ module Utils
       args.each { |k, v| cmd += " -#{@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]}#{@cmd_arg_val_delim}#{v}" }
       cmd += " #{flags.map{ |el| '-' + el }.join(' ')} #{executable} #{argv.join(' ')}"
       parse_report(%x[#{cmd}])
+    end
+
+    def get_correct_value_for(arg)
+
+    end
+
+    def get_wrong_value_for(arg)
+
     end
 
   end
@@ -238,6 +252,14 @@ module Utils
           :memory_limit => add_degrees(%w[ B b ]),
           :time_limit => add_degrees(%w[ s m h d ]),
       }
+    end
+
+    def get_correct_value_for(arg)
+      1
+    end
+
+    def get_wrong_value_for(arg)
+      'something_wrong'
     end
 
   end
@@ -302,6 +324,32 @@ module Utils
           :memory_limit => %w[ K M ],
           :time_limit => %w[ s ms ],
       }
+    end
+
+    def get_correct_value_for(arg)
+      if arg_for_property?(:load_ratio, arg)
+        0.5
+      elsif arg_for_property?(:directory, arg)
+        '.'
+      elsif arg_for_property?([:input, :output, :error], arg)
+        @tmp_file_name
+      else
+        1
+      end
+    end
+
+    def get_wrong_value_for(arg)
+      if arg_for_property?([:input, :output, :error, :store_in_file], arg)
+        '"L:\Some\Unknown\Folder\On\Not\Existing\HDD"'
+      elsif arg_for_property?(:load_ratio, arg)
+        1
+      elsif arg_for_property?([:time_limit, :idleness], arg)
+        0.5
+      elsif arg_for_property?(:directory, arg)
+        nil
+      else
+        'something_wrong'
+      end
     end
 
   end
