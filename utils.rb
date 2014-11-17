@@ -23,6 +23,7 @@ module Utils
   TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
   WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
   MEMORY_LIMIT_EXCEEDED_RESULT = 'MemoryLimitExceeded'
+  IDLENESS_LIMIT_EXCEEDED_RESULT = 'IdlenessLimitExceeded'
   ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExit'
   LOAD_RATIO_RESULT = 'LoadRatio'
 
@@ -294,6 +295,7 @@ module Utils
           res[Utils::TERMINATE_REASON_FIELD] = case exit_status_msg
             when 'memory limit exceeded' then Utils::MEMORY_LIMIT_EXCEEDED_RESULT
             when 'time limit exceeded' then Utils::TIME_LIMIT_EXCEEDED_RESULT
+            when 'idleness limit exceeded' then Utils::IDLENESS_LIMIT_EXCEEDED_RESULT
             else res[Utils::SPAWNER_ERROR_FIELD] = nil
             end
         end
