@@ -314,7 +314,7 @@ module Utils
           :input => :i,
           :output => :o,
           :error => :e,
-          :idleness => :i,
+          :idleness => :y,
           :load_ratio => :r,
           :directory => :d,
       }
