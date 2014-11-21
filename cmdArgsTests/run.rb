@@ -6,7 +6,7 @@ class CmdArgsTests < Utils::SpawnerTester
   private
 
   def create_temporary_file
-    File.open(Utils.spawner.tmp_file_name, 'w') { |f| f.write('some data') }
+    super('tmp.txt', 'some data')
   end
 
   def compare_with_none_error(expected, rpt, test_order)

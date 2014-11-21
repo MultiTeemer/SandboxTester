@@ -117,9 +117,46 @@ module Utils
 
     protected
 
+    class FileHandler
+
+      private
+
+      @file_name
+
+      public
+
+      attr_reader :file_name
+
+      def initialize(file_name, write_data = nil)
+        @file_name = file_name
+        write(write_data)
+      end
+
+      def read
+        IO.read(@file_name)
+      end
+
+      def write(write_data)
+        File.open(@file_name, 'w') { |f| f.write(write_data) } unless write_data.nil?
+      end
+
+      def clear
+        File.open(@file_name, 'w') { |f| f.write(nil) }
+      end
+
+      def to_s
+        @file_name
+      end
+
+    end
+
     def tests_count
       count = Dir.entries('.').size - 2
       (1..count)
+    end
+
+    def create_temporary_file(file_name, write_data = nil)
+      FileHandler.new(file_name, write_data)
     end
 
     public
@@ -156,6 +193,14 @@ module Utils
 
     def asindel(expected, actual, delta, test_order)
       assert_in_delta(expected, actual, delta, fail_on_th_test_msg(test_order))
+    end
+
+    def astrue(actual, test_order)
+      assert_true(actual, fail_on_th_test_msg(test_order))
+    end
+
+    def asfalse(actual, test_order)
+      assert_false(actual, fail_on_th_test_msg(test_order))
     end
 
   end
