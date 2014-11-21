@@ -389,7 +389,7 @@ module Utils
     def run(executable, args = {}, flags = [], argv = [])
       args[:load_ratio] = 0.50 if !args[:idleness].nil? and args[:load_ratio].nil?
       args[:idleness] = fractional_s_to_ms(args[:idleness]) + 'ms' if args[:idleness]
-      args[:time_limit] = fractional_s_to_ms(args[:time_limit]) if args[:time_limit]
+      args[:time_limit] = fractional_s_to_ms(args[:time_limit]) + 'ms' if args[:time_limit]
       super
     end
 
