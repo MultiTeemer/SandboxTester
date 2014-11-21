@@ -16,6 +16,7 @@ class WriteTests < Utils::SpawnerTester
   end
 
   def test_streams_redirecting
+    tests_passed = 0
     write_data = '1'
     in_file_name = 'in.txt'
     out_file_name = 'out.txt'
@@ -58,6 +59,37 @@ class WriteTests < Utils::SpawnerTester
 
       out_file_handler.clear if output_provided
       err_file_handler.clear if error_provided
+
+      tests_passed += 1
+
+    end
+
+    streams_combinations.reject! { |comb| comb.size == 1 or not comb.include? :input }
+
+    streams_combinations.each_index do |i|
+
+      in_file_handler.write(write_data)
+
+      combination = streams_combinations[i]
+      test_number = tests_passed + i + 1
+
+      output_provided = combination.include? :output
+      error_provided = combination.include? :error
+
+      args = {}
+      args[:input], args[:time_limit] = in_file_name, '3s'
+      args[:output] = in_file_name if output_provided
+      args[:error] = in_file_name if error_provided
+
+      rpt = run_spawner_test(test_number, args)
+
+      exit_success?(rpt)
+
+      astrue(in_file_handler.read != write_data, test_number)
+
+      in_file_handler.clear
+
+      tests_passed += 1
 
     end
 
