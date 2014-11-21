@@ -111,4 +111,10 @@ class WriteTests < Utils::SpawnerTester
     end
   end
 
+  def test_redirect_and_hide_output
+    out_handler = FileHandler.new('out.txt')
+    exit_success?(run_spawner_test(1, { :output => out_handler.file_name }, [ :hide_output ]))
+    astrue(out_handler.read.empty?, 1)
+  end
+
 end
