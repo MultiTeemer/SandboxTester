@@ -211,6 +211,7 @@ module Utils
 
     @path
     @cmd_args_mapping
+    @cmd_flags_mapping
     @cmd_arg_val_delim
     @cmd_args
     @cmd_args_multipliers
@@ -242,7 +243,8 @@ module Utils
     def run(executable, args = {}, flags = [], argv = [])
       cmd = @path
       args.each { |k, v| cmd += " -#{@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]}#{@cmd_arg_val_delim}#{v}" }
-      cmd += " #{flags.map{ |el| '-' + el }.join(' ')} #{executable} #{argv.join(' ')}"
+      run_flags = flags.map{ |el| '-' + (@cmd_flags_mapping[el].nil? ? el.to_s : @cmd_flags_mapping[el].to_s) }
+      cmd += " #{ run_flags.join(' ') } #{ executable } #{ argv.join(' ') }"
       parse_report(%x[#{cmd}])
     end
 
@@ -297,6 +299,10 @@ module Utils
           :deadline => :d,
           :load_ratio => :lr,
           :directory => :wd,
+      }
+      @cmd_flags_mapping = {
+          :hide_output => :ho,
+          :hide_report => :hr,
       }
       @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd ]
       @cmd_flags = %w[ ho sw ] #TODO: hide report workaround
@@ -377,6 +383,9 @@ module Utils
           :load_ratio => :r,
           :directory => :d,
           :store_in_file => :s,
+      }
+      @cmd_flags_mapping = {
+          :hide_report => :q,
       }
       @cmd_args = %w[ t m r y d i o e s D ] #l p
       @cmd_flags = %w[ x w 1 ] # q
