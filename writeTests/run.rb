@@ -92,7 +92,23 @@ class WriteTests < Utils::SpawnerTester
       tests_passed += 1
 
     end
+  end
 
+  def test_streams_redirecting_to_null
+    args = {
+        :input => 'nul',
+        :output => 'nul',
+        :error => 'nul',
+        :time_limit => 0.5,
+    }
+
+    exit_success?(run_spawner_test(1, args)) # TODO: why? may be it should give time limit exceeded for example?
+
+    (2..3).each do |test_order|
+      rpt = run_spawner_test(test_order, args)
+      aseq(Utils::TIME_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], test_order)
+      assert_not_equal(0, rpt[Utils::WRITTEN_FIELD], fail_on_th_test_msg(test_order))
+    end
   end
 
 end
