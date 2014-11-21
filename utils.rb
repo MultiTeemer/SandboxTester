@@ -109,6 +109,12 @@ module Utils
 
   class SpawnerTester < Test::Unit::TestCase
 
+    private
+
+    def fail_on_th_test_msg(test_order)
+      "Fail on #{test_order}th test"
+    end
+
     protected
 
     def tests_count
@@ -145,11 +151,11 @@ module Utils
     end
 
     def aseq(expected, actual, test_order)
-      assert_equal(expected, actual, "Fail on #{test_order + 1}th test")
+      assert_equal(expected, actual, fail_on_th_test_msg(test_order))
     end
 
     def asindel(expected, actual, delta, test_order)
-      assert_in_delta(expected, actual, delta, "Fail on #{test_order + 1}th test")
+      assert_in_delta(expected, actual, delta, fail_on_th_test_msg(test_order))
     end
 
   end
