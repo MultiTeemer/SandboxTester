@@ -1,8 +1,8 @@
-#include <iostream>
+#include <cstdio>
 
 int main()
 {
 	int n;
-	std::cin >> n;
+	scanf("%d", &n);
 	return 0;
 }
