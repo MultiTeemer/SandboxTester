@@ -15,7 +15,7 @@ class WriteTests < Utils::SpawnerTester
     end
   end
 
-  def test_streams_redirecting
+  def test_streams_redirecting #TODO: checkout out randomness of test failing
     tests_passed = 0
     write_data = '1'
     in_file_name = 'in.txt'
@@ -24,7 +24,6 @@ class WriteTests < Utils::SpawnerTester
     in_file_handler = FileHandler.new(in_file_name, write_data)
     out_file_handler = FileHandler.new(out_file_name)
     err_file_handler = FileHandler.new(err_file_name)
-    #streams_combinations = (1..3).map{ |len| %i[ input output error ].combination(len).to_a } #TODO: wtf?!! why this code is looping?
     streams_combinations = [
         [:input], [:output], [:error],
         [:input, :output], [:input, :error], [:output, :error],
@@ -47,7 +46,7 @@ class WriteTests < Utils::SpawnerTester
 
       rpt = run_spawner_test(test_number, args)
 
-      exit_success?(rpt)
+      exit_success?(rpt, test_number)
 
       if input_provided
         astrue(out_file_handler.read == write_data, test_number) if output_provided
@@ -64,13 +63,23 @@ class WriteTests < Utils::SpawnerTester
 
     end
 
-    streams_combinations.reject! { |comb| comb.size == 1 or not comb.include? :input }
+    streams_looping = []
 
     streams_combinations.each_index do |i|
+      comb = streams_combinations[i]
+      if comb.size > 1 && comb.include?(:input)
+        streams_looping.push({
+           :order => i,
+           :comb => comb
+        })
+      end
+    end
+
+    streams_looping.each_index do |i|
 
       in_file_handler.write(write_data)
 
-      combination = streams_combinations[i]
+      combination = streams_looping[i][:comb]
       test_number = tests_passed + i + 1
 
       output_provided = combination.include? :output
@@ -81,9 +90,9 @@ class WriteTests < Utils::SpawnerTester
       args[:output] = in_file_name if output_provided
       args[:error] = in_file_name if error_provided
 
-      rpt = run_spawner_test(test_number, args)
+      rpt = run_spawner_test(streams_looping[i][:order], args)
 
-      exit_success?(rpt)
+      exit_success?(rpt, test_number)
 
       astrue(in_file_handler.read != write_data, test_number)
 

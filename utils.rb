@@ -24,7 +24,7 @@ module Utils
   WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
   MEMORY_LIMIT_EXCEEDED_RESULT = 'MemoryLimitExceeded'
   IDLENESS_LIMIT_EXCEEDED_RESULT = 'IdlenessLimitExceeded'
-  ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExit'
+  ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExitProcess'
   LOAD_RATIO_RESULT = 'LoadRatio'
 
   ACCESS_VIOLATION_EXIT_STATUS = 'AccessViolation'
@@ -89,9 +89,7 @@ module Utils
   end
 
   def self.clear
-    Dir.foreach('bin/') do |item|
-      File.delete("bin/#{item}") if item =~ /\.(exe|txt|o)$/
-    end
+    FileUtils.rm_rf('bin')
   end
 
   @spawner = nil
@@ -104,6 +102,7 @@ module Utils
     @spawner = (case type
       when 'cats' then CatsSpawnerWrapper
       when 'pcms2' then PCMS2SpawnerWrapper
+      else nil
     end).new(path)
   end
 
@@ -166,10 +165,10 @@ module Utils
       Utils.spawner.run(file, args, flags, argv)
     end
 
-    def exit_success?(report)
-      assert_equal(Utils::EXIT_PROCESS_RESULT, report[TERMINATE_REASON_FIELD])
-      assert_equal('0', report[EXIT_STATUS_FIELD])
-      assert_equal('<none>', report[SPAWNER_ERROR_FIELD])
+    def exit_success?(report, test_order = -1)
+      aseq(Utils::EXIT_PROCESS_RESULT, report[TERMINATE_REASON_FIELD], test_order)
+      aseq('0', report[EXIT_STATUS_FIELD], test_order)
+      aseq('<none>', report[SPAWNER_ERROR_FIELD], test_order)
     end
 
     def setup
@@ -177,6 +176,7 @@ module Utils
       dir = name.slice(0, name.length - 5)
       dir[0] = dir[0].downcase!
       Dir.chdir("#{dir}Tests/")
+      Dir.mkdir('bin')
       Utils.compile_for_test(self.method_name)
       Dir.chdir('./bin/')
     end
@@ -344,6 +344,9 @@ module Utils
           error_msg = $1.to_s
           res[Utils::EXIT_STATUS_FIELD] = case error_msg
             when 'EXCEPTION_ACCESS_VIOLATION' then Utils::ACCESS_VIOLATION_EXIT_STATUS
+            when 'EXCEPTION_INT_DIVIDE_BY_ZERO' then Utils::INT_DIVIDE_BY_ZERO_EXIT_STATUS
+            when 'EXCEPTION_PRIV_INSTRUCTION' then Utils::PRIVILEGED_INSTRUCTION_EXIT_STATUS
+            when 'EXCEPTION_STACK_OVERFLOW' then Utils::STACK_OVERFLOW_EXIT_STATUS
             else nil
           end
           res[Utils::TERMINATE_REASON_FIELD] = Utils::ABNORMAL_EXIT_PROCESS_RESULT
@@ -393,13 +396,6 @@ module Utils
           :memory_limit => %w[ K M ],
           :time_limit => %w[ s ms ],
       }
-    end
-
-    def run(executable, args = {}, flags = [], argv = [])
-      args[:load_ratio] = 0.50 if !args[:idleness].nil? and args[:load_ratio].nil?
-      args[:idleness] = fractional_s_to_ms(args[:idleness]) + 'ms' if args[:idleness]
-      args[:time_limit] = fractional_s_to_ms(args[:time_limit]) + 'ms' if args[:time_limit]
-      super
     end
 
     def get_correct_value_for(arg)

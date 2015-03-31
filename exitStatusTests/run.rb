@@ -19,8 +19,8 @@ class ExitStatusTests < Utils::SpawnerTester
     tests_count.each do |i|
       rpt = run_spawner_test(i)
       idx = i - 1
-      aseq(Utils::ABNORMAL_EXIT_PROCESS_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], idx)
-      aseq(statuses[idx], rpt[Utils::EXIT_STATUS_FIELD], idx) if idx < statuses.size
+      aseq(Utils::ABNORMAL_EXIT_PROCESS_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], i)
+      aseq(statuses[idx], rpt[Utils::EXIT_STATUS_FIELD], i) if idx < statuses.size
     end
   end
 

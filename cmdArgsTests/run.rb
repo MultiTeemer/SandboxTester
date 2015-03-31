@@ -47,7 +47,15 @@ class CmdArgsTests < Utils::SpawnerTester
             correct_args[k] = Utils.spawner.get_correct_value_for(k)
             wrong_args[k] = Utils.spawner.get_wrong_value_for(k)
           end
+          #puts '-' * 30 + 'correct'
+          #puts correct_args
+          #puts run_spawner_test(item[:order], wrong_args)
+          #puts '-' * 30
           item[:func].call(run_spawner_test(item[:order], correct_args), length)
+          #puts '-' * 30 + 'wrong'
+          #puts wrong_args
+          #puts run_spawner_test(item[:order], wrong_args)
+          #puts '-' * 30
           error_on_execute?(run_spawner_test(item[:order], wrong_args)) if wrong_args.size > 0
         end
       end

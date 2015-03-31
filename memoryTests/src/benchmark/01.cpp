@@ -3,11 +3,11 @@
 
 int main(int argc, char* argv[])
 {
-	long long limit = atoll(argv[1]);
+    long long limit = atoll(argv[1]);
 
-	printf("%ld", limit);	
+    printf("%ld", limit);
 
-	malloc(limit);
+    malloc(limit);
 
-	return 0;
+    return 0;
 }
