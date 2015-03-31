@@ -23,7 +23,7 @@ module Utils
   TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
   WRITE_LIMIT_EXCEEDED_RESULT = 'WriteLimitExceeded'
   MEMORY_LIMIT_EXCEEDED_RESULT = 'MemoryLimitExceeded'
-  IDLENESS_LIMIT_EXCEEDED_RESULT = 'IdlenessLimitExceeded'
+  IDLENESS_LIMIT_EXCEEDED_RESULT = 'IdleTimeLimitExceeded'
   ABNORMAL_EXIT_PROCESS_RESULT = 'AbnormalExitProcess'
   LOAD_RATIO_RESULT = 'LoadRatio'
 

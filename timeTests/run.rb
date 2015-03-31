@@ -7,18 +7,16 @@ class TimeTests < Utils::SpawnerTester
     sep = '-' * 30
     tests_count.each do |order|
       l, r = 0.0, 100.0
-      m = (l + r) / 2
       while r - l > 1
-        rpt = run_spawner_test(order, { :idleness => '1s', :time_limit => '2s', :load_ratio => m / 100.0 })
-        puts rpt[Utils::TERMINATE_REASON_FIELD]
-        if rpt[Utils::TERMINATE_REASON_FIELD] == Utils::IDLENESS_LIMIT_EXCEEDED_RESULT
-          r = m
-        else
-          l = m
-        end
         m = (l + r) / 2
+        rpt = run_spawner_test(order, { :idleness => '1s', :time_limit => '2s', :load_ratio => m / 100.0 })
+        case rpt[Utils::TERMINATE_REASON_FIELD]
+          when Utils::IDLENESS_LIMIT_EXCEEDED_RESULT then r = m
+          when Utils::TIME_LIMIT_EXCEEDED_RESULT then l = m
+          else aseq(true, rpt[Utils::TERMINATE_REASON_FIELD], order)
+        end
       end
-      puts sep, "Benchmark for #{%w[ input output ][order - 1]}", m, sep
+      puts sep, "Benchmark for #{%w[ input output ][order - 1]}: #{l}-#{r}%", sep
     end
   end
 
