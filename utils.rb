@@ -217,6 +217,7 @@ module Utils
     @cmd_args_multipliers
     @cmd_flags
     @tmp_file_name
+    @environment_mods
 
     def parse_report(rpt)
 
@@ -233,7 +234,8 @@ module Utils
     attr_reader :cmd_args,
                 :cmd_args_multipliers,
                 :cmd_flags,
-                :tmp_file_name
+                :tmp_file_name,
+                :environment_mods
 
     def initialize(path)
       @path = path
@@ -242,7 +244,17 @@ module Utils
 
     def run(executable, args = {}, flags = [], argv = [])
       cmd = @path
-      args.each { |k, v| cmd += " -#{@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]}#{@cmd_arg_val_delim}#{v}" }
+      args.each do |k, v|
+        next if v.nil?
+
+        key = (@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]).to_s
+
+        if v.kind_of?(Array)
+          cmd += v.map{ |val| " -#{key}#{@cmd_arg_val_delim}#{val.to_s}" }.join(' ')
+        else
+          cmd += " -#{key}#{@cmd_arg_val_delim}#{v.to_s}"
+        end
+      end
       run_flags = flags.map{ |el| '-' + (@cmd_flags_mapping[el].nil? ? el.to_s : @cmd_flags_mapping[el].to_s) }
       cmd += " #{ run_flags.join(' ') } #{ executable } #{ argv.join(' ') }"
       parse_report(%x[#{cmd}])
@@ -299,17 +311,20 @@ module Utils
           :deadline => :d,
           :load_ratio => :lr,
           :directory => :wd,
+          :environment_mode => :env,
+          :environment_vars => :D,
       }
       @cmd_flags_mapping = {
           :hide_output => :ho,
           :hide_report => :hr,
       }
-      @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd ]
+      @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd env D ]
       @cmd_flags = %w[ ho sw ] #TODO: hide report workaround
       @cmd_args_multipliers = {
           :memory_limit => add_degrees(%w[ B b ]),
           :time_limit => add_degrees(%w[ s m h d ]),
       }
+      @environment_mods = %w[ inherit user-default ]
     end
 
     def get_correct_value_for(arg)
@@ -386,6 +401,7 @@ module Utils
           :load_ratio => :r,
           :directory => :d,
           :store_in_file => :s,
+          :environment_vars => :D,
       }
       @cmd_flags_mapping = {
           :hide_report => :q,
@@ -396,6 +412,7 @@ module Utils
           :memory_limit => %w[ K M ],
           :time_limit => %w[ s ms ],
       }
+      @environment_mods = [nil]
     end
 
     def get_correct_value_for(arg)
