@@ -40,7 +40,7 @@ class WriteTests < Utils::SpawnerTester
       error_provided = combination.include? :error
 
       args = {}
-      args[:input], args[:time_limit] = in_file_name, '3s' if input_provided
+      args[:input], args[:idleness], args[:load_ratio] = in_file_name, '1s', 5 if input_provided
       args[:output] = out_file_name if output_provided
       args[:error] = err_file_name if error_provided
 
