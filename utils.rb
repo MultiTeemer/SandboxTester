@@ -176,7 +176,7 @@ module Utils
       dir = name.slice(0, name.length - 5)
       dir[0] = dir[0].downcase!
       Dir.chdir("#{dir}Tests/")
-      Dir.mkdir('bin')
+      Dir.mkdir('bin') unless Dir.exists?('bin')
       Utils.compile_for_test(self.method_name)
       Dir.chdir('./bin/')
     end
