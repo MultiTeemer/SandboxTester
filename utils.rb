@@ -218,6 +218,7 @@ module Utils
     @cmd_flags
     @tmp_file_name
     @environment_mods
+    @features
 
     def parse_report(rpt)
 
@@ -240,6 +241,7 @@ module Utils
     def initialize(path)
       @path = path
       @tmp_file_name = 'tmp.txt'
+      @features = []
     end
 
     def run(executable, args = {}, flags = [], argv = [])
@@ -266,6 +268,10 @@ module Utils
 
     def get_wrong_value_for(arg)
 
+    end
+
+    def has_feature?(feature)
+      @features.include?(feature)
     end
 
   end
@@ -325,6 +331,10 @@ module Utils
           :time_limit => add_degrees(%w[ s m h d ]),
       }
       @environment_mods = %w[ inherit user-default clear ]
+      @features = %w[
+          environment_modes
+          deadline
+      ]
     end
 
     def get_correct_value_for(arg)

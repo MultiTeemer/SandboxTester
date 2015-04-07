@@ -4,6 +4,8 @@ require './utils.rb'
 class EnvironmentTests < Utils::SpawnerTester
 
   def test_modes
+    omit_unless(Utils.spawner.has_feature?('environment_modes'))
+
     env_vars = [
         {
           :var => 'val',
