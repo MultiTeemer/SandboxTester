@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'inifile'
 require 'test/unit'
 require 'test/unit/ui/console/testrunner'
 require 'optparse'
@@ -20,7 +21,7 @@ OptionParser.new do |opts|
     end
   end
 
-  opts.on('--path=MANDATORY', '', 'Path to testing item') { |path| options[:path] = path }
+  opts.on('--path[=OPTIONAL]', '', 'Path to testing item') { |path| options[:path] = path }
 
   opts.on('--type=MANDATORY', '', 'Type of testing item') do |type|
     options[:type] = type if %w[ cats cats_old pcms2 ].include? type
@@ -29,6 +30,7 @@ OptionParser.new do |opts|
 end.parse!
 
 options[:type] = 'cats' if options[:type].nil?
+options[:path] = IniFile.load('settings.ini')[options[:type]]['path'] if options[:path].nil?
 tests_tags.each { |tag| options[:tests][tag.to_sym] = true  } if options[:tests].size == 0
 
 exit 0 if options[:path].nil?
