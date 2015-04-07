@@ -324,7 +324,7 @@ module Utils
           :memory_limit => add_degrees(%w[ B b ]),
           :time_limit => add_degrees(%w[ s m h d ]),
       }
-      @environment_mods = %w[ inherit user-default ]
+      @environment_mods = %w[ inherit user-default clear ]
     end
 
     def get_correct_value_for(arg)
