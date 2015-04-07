@@ -3,7 +3,7 @@ require './utils.rb'
 
 class EnvironmentTests < Utils::SpawnerTester
 
-  def test_main
+  def test_modes
     env_vars = [
         {
           :var => 'val',
@@ -37,8 +37,6 @@ class EnvironmentTests < Utils::SpawnerTester
 
       vars_count = out.read.to_i
 
-      astrue(vars_count > 0, test_counter)
-
       test_counter += 1
 
       #check vars count
@@ -66,6 +64,35 @@ class EnvironmentTests < Utils::SpawnerTester
       #check vars replacement
       exit_success?(run_spawner_test(variables_printer_idx, args.merge({ :environment_vars => 'OS=12345' })), test_counter)
       aseq('12345', get_var.call('OS'), test_counter)
+    end
+  end
+
+  def test_vars
+    var_name = 'var'
+    var_value = 'val'
+    out_handler = FileHandler.new('out.txt')
+    args = {
+        :environment_vars => [var_name + '=' + var_value],
+        :output => out_handler.file_name,
+    }
+
+    exit_success?(run_spawner_test(1, args), 1)
+
+    run_spawner_test(2, args, [], [var_name])
+
+    aseq(var_value, out_handler.read, 2)
+
+    ids = (1..50).to_a.map { |_| rand(1 .. 1 << 15).to_s }
+    vars = ids.map { |o| "#{var_name + o}=#{var_value + o}" }
+    args = {
+        :environment_vars => vars,
+    }
+
+    exit_success?(run_spawner_test(1, args), 3)
+
+    ids.each do |id|
+      run_spawner_test(2, args, [], [var_name + id])
+      aseq(var_value, out_handler.read, 4)
     end
   end
 
