@@ -1,5 +1,6 @@
 require 'test/unit'
 require './utils.rb'
+require './args.rb'
 
 class WriteTests < Utils::SpawnerTester
 
@@ -11,7 +12,11 @@ class WriteTests < Utils::SpawnerTester
 
   def test_write_limit
     tests_count.each do |test_order|
-      aseq(Utils::WRITE_LIMIT_EXCEEDED_RESULT, run_spawner_test(test_order, { :wl => '1kB' })[Utils::TERMINATE_REASON_FIELD], test_order)
+      aseq(
+          Utils::WRITE_LIMIT_EXCEEDED_RESULT,
+          run_spawner_test(test_order, { :wl => Args::KilobyteArgument.new(1) })[Utils::TERMINATE_REASON_FIELD],
+          test_order
+      )
     end
   end
 
@@ -60,7 +65,6 @@ class WriteTests < Utils::SpawnerTester
       err_file_handler.clear if error_provided
 
       tests_passed += 1
-
     end
 
     streams_looping = []
@@ -108,7 +112,7 @@ class WriteTests < Utils::SpawnerTester
         :input => 'nul',
         :output => 'nul',
         :error => 'nul',
-        :time_limit => 0.5,
+        :time_limit => Args::MillisecondsArgument.new(500),
     }
 
     exit_success?(run_spawner_test(1, args)) # TODO: why? may be it should give time limit exceeded for example?

@@ -230,6 +230,20 @@ module Utils
       false
     end
 
+
+    def unify(arg)
+      raise 'Virtual method called!'
+    end
+
+    def suffix(arg_class)
+      raise 'Virtual method called!'
+    end
+
+    def transform_arg(arg)
+      u_arg = unify(arg)
+      u_arg.to_s + suffix(u_arg.class)
+    end
+
     public
 
     attr_reader :cmd_args,
@@ -252,9 +266,9 @@ module Utils
         key = (@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]).to_s
 
         if v.kind_of?(Array)
-          cmd += v.map{ |val| " -#{key}#{@cmd_arg_val_delim}#{val.to_s}" }.join(' ')
+          cmd += v.map{ |val| " -#{key}#{@cmd_arg_val_delim}#{transform_arg(val)}" }.join(' ')
         else
-          cmd += " -#{key}#{@cmd_arg_val_delim}#{v.to_s}"
+          cmd += " -#{key}#{@cmd_arg_val_delim}#{transform_arg(v)}"
         end
       end
       run_flags = flags.map{ |el| '-' + (@cmd_flags_mapping[el].nil? ? el.to_s : @cmd_flags_mapping[el].to_s) }
@@ -298,6 +312,22 @@ module Utils
         res[field.to_sym] = v
       end
       res
+    end
+
+    def unify(arg)
+      arg
+    end
+
+    def suffix(arg_class)
+      case arg_class
+        when Args::SecondsArgument then 's'
+        when Args::MinutesArgument then 'm'
+        when Args::MillisecondsArgument then 'ms'
+        when Args::ByteArgument then 'B'
+        when Args::KilobyteArgument then 'kB'
+        when Args::GigabyteArgument then 'GB'
+        else ''
+      end
     end
 
     public
@@ -392,6 +422,23 @@ module Utils
         end
       end
       res
+    end
+
+    def unify(arg)
+      case arg.class
+        when Args::GigabyteArgument then arg.to_bytes
+        when Args::MinutesArgument then arg.to_seconds
+        else arg
+      end
+    end
+
+    def suffix(arg_class)
+      case arg.class
+        when Args::MillisecondsArgument then 'ms'
+        when Args::KilobyteArgument then 'K'
+        when Args::MegabyteArgument then 'M'
+        else ''
+      end
     end
 
     public
