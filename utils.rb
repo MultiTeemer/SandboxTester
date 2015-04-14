@@ -58,16 +58,17 @@ module Utils
 		%w[ . .. .idea .git ].include? dir
   end
 
-  def self.compile(compiler, file, out)
-    system("#{compiler} #{file} -o#{out} 1>nul 2>nul") unless system_dir?(file)
+  def self.get_compiler_for(extension)
+    case extension
+      when 'cpp' then GCCCompilerWrapper.new
+      when 'pas' then PascalCompilerWrapper.new
+      when 'rb', 'py' then InterpretableCompilerWrapper.new
+      else raise 'Wrong extension for test file!'
+    end
   end
 
-  def self.compile_cpp(file, out)
-    compile('g++', file, out)
-  end
-
-  def self.compile_pascal(file, out)
-    compile('fpc', file, out)
+  def self.file_extension(filename)
+    File.extname(filename).delete('.')
   end
 
   def self.get_dir_name(test_name)
@@ -76,14 +77,15 @@ module Utils
 
   def self.compile_for_test(test_name)
     test_name = get_dir_name(test_name)
+
     Dir.foreach("src/#{test_name}") do |file|
       unless system_dir?(file)
-        input, output = "src/#{test_name}/#{file}", "bin/#{file.slice(0, file.length - 4)}.exe"
-        if file =~ /\.cpp$/
-          compile_cpp(input, output)
-        elsif file =~ /\.pas$/
-          compile_pascal(input, output)
-        end
+        in_ext = file_extension(file)
+        input, output = "src/#{test_name}/#{file}", "bin/#{file.delete('.' + in_ext)}"
+
+        out_ext = if %w[ cpp pas cs ].include? in_ext then 'exe' else in_ext end
+
+        get_compiler_for(in_ext).compile(input, "#{output}.#{out_ext}")
       end
     end
   end
@@ -104,6 +106,52 @@ module Utils
       when 'pcms2' then PCMS2SpawnerWrapper
       else nil
     end).new(path)
+  end
+
+  class CompilerWrapper
+    @cmd
+    @out_arg
+
+    attr_accessor :cmd,
+                  :out_arg
+
+    def initialize(run_command, output_argument)
+      @cmd = run_command
+      @out_arg = output_argument
+    end
+
+    def compile(source, output)
+      system("#{@cmd} #{@out_arg}#{output} #{source} 1>nul 2>nul")
+    end
+
+  end
+
+  class GCCCompilerWrapper < CompilerWrapper
+
+    def initialize
+      super 'g++', '-o '
+    end
+
+  end
+
+  class PascalCompilerWrapper < CompilerWrapper
+
+    def initialize
+      super 'fpc', '-o '
+    end
+
+  end
+
+  class InterpretableCompilerWrapper < CompilerWrapper
+
+    def initialize
+
+    end
+
+    def compile(source, output)
+      FileUtils.cp(source, output)
+    end
+
   end
 
   class SpawnerTester < Test::Unit::TestCase
@@ -161,7 +209,12 @@ module Utils
     public
 
     def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
-      file = " #{File.absolute_path(Dir.getwd)}/#{sprintf('%02d', test_order)}.exe" unless test_order.nil?
+      file = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
+        filename =~ /#{sprintf('%02d', test_order)}\.(.*)$/
+      end
+
+      raise "Wrong test order: #{test_order.inspect}" if file.nil?
+
       Utils.spawner.run(file, args, flags, argv)
     end
 
