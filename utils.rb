@@ -294,7 +294,7 @@ module Utils
 
     def transform_arg(arg)
       u_arg = unify(arg)
-      u_arg.to_s + suffix(u_arg.class)
+      u_arg.to_s + suffix(u_arg)
     end
 
     public
@@ -371,8 +371,8 @@ module Utils
       arg
     end
 
-    def suffix(arg_class)
-      case arg_class
+    def suffix(arg)
+      case arg
         when Args::SecondsArgument then 's'
         when Args::MinutesArgument then 'm'
         when Args::MillisecondsArgument then 'ms'
@@ -480,15 +480,15 @@ module Utils
     end
 
     def unify(arg)
-      case arg.class
+      case arg
         when Args::GigabyteArgument then arg.to_bytes
         when Args::MinutesArgument then arg.to_seconds
         else arg
       end
     end
 
-    def suffix(arg_class)
-      case arg.class
+    def suffix(arg)
+      case arg
         when Args::MillisecondsArgument then 'ms'
         when Args::KilobyteArgument then 'K'
         when Args::MegabyteArgument then 'M'
