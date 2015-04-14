@@ -11,6 +11,8 @@ class WriteTests < Utils::SpawnerTester
   end
 
   def test_write_limit
+    omit_unless(Utils.spawner.has_feature?('write_limit'))
+
     tests_count.each do |test_order|
       aseq(
           Utils::WRITE_LIMIT_EXCEEDED_RESULT,

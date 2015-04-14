@@ -338,6 +338,7 @@ module Utils
       @cmd_args_mapping = {
           :time_limit => :tl,
           :memory_limit => :ml,
+          :write_limit => :wl,
           :user => :u,
           :password => :p,
           :input => :i,
@@ -364,6 +365,7 @@ module Utils
       @features = %w[
           environment_modes
           deadline
+          write_limit
       ]
     end
 
