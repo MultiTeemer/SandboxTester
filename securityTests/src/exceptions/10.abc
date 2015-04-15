@@ -1,0 +1,13 @@
+{$ifdef fpc}
+        {$mode objfpc}
+{$endif}
+
+uses System;
+
+begin
+   try
+        raise Exception.Create('a')
+   except
+        on E: Exception do begin end
+   end;
+end.

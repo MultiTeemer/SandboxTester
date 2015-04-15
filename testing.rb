@@ -5,7 +5,7 @@ require 'test/unit/ui/console/testrunner'
 require 'optparse'
 require './utils.rb'
 
-tests_tags = %w[ base exitStatus memory time write cmdArgs environment ]
+tests_tags = %w[ base exitStatus memory time write cmdArgs environment security ]
 
 tests_tags.each { |tag| require "./#{tag}Tests/run.rb" }
 
