@@ -21,7 +21,7 @@ class MemoryTests < Utils::SpawnerTester
   end
 
   def test_memory_limit
-    memory_limit = [Args::ByteArgument.new(1 << 20 + 1 << 19)] * 12
+    memory_limit = [Args::MegabyteArgument.new(3)] * 12
     memory_limit.each_index do |i|
       rpt = run_spawner_test(i + 1, { :memory_limit => memory_limit[i] })
       aseq(Utils::MEMORY_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], i + 1)
