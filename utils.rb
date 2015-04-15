@@ -62,7 +62,8 @@ module Utils
     case extension
       when 'cpp' then GCCCompilerWrapper.new
       when 'pas' then PascalCompilerWrapper.new
-      when 'rb', 'py' then InterpretableCompilerWrapper.new
+      when 'rb' then RubyInterpreterWrapper.new
+      when 'py' then PythonInterpreterWrapper.new
       else raise 'Wrong extension for test file!'
     end
   end
@@ -144,12 +145,28 @@ module Utils
 
   class InterpretableCompilerWrapper < CompilerWrapper
 
-    def initialize
-
+    def initialize(cmd)
+      super cmd, nil
     end
 
     def compile(source, output)
       FileUtils.cp(source, output)
+    end
+
+  end
+
+  class RubyInterpreterWrapper < InterpretableCompilerWrapper
+
+    def initialize
+      super 'ruby'
+    end
+
+  end
+
+  class PythonInterpreterWrapper < InterpretableCompilerWrapper
+
+    def initialize
+      super 'python'
     end
 
   end
@@ -209,13 +226,19 @@ module Utils
     public
 
     def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
-      file = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
+      executable = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
         filename =~ /#{sprintf('%02d', test_order)}\.(.*)$/
       end
 
-      raise "Wrong test order: #{test_order.inspect}" if file.nil?
+      raise "Wrong test order: #{test_order.inspect}" if executable.nil?
 
-      Utils.spawner.run(file, args, flags, argv)
+      ext = Utils.file_extension(executable)
+      unless ext == 'exe'
+        executable = Utils.get_compiler_for(ext).cmd + ' ' + executable
+        flags.push(:command)
+      end
+
+      Utils.spawner.run(executable, args, flags, argv)
     end
 
     def exit_success?(report, test_order = -1)
@@ -324,7 +347,7 @@ module Utils
           cmd += " -#{key}#{@cmd_arg_val_delim}#{transform_arg(v)}"
         end
       end
-      run_flags = flags.map{ |el| '-' + (@cmd_flags_mapping[el].nil? ? el.to_s : @cmd_flags_mapping[el].to_s) }
+      run_flags = flags.map{ |el| "--#{@cmd_flags_mapping[el].to_s}" unless @cmd_flags_mapping[el].nil? }
       cmd += " #{ run_flags.join(' ') } #{ executable } #{ argv.join(' ') }"
       parse_report(%x[#{cmd}])
     end
@@ -407,9 +430,10 @@ module Utils
       @cmd_flags_mapping = {
           :hide_output => :ho,
           :hide_report => :hr,
+          :command => :cmd,
       }
       @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd env D ]
-      @cmd_flags = %w[ ho sw ] #TODO: hide report workaround
+      @cmd_flags = %w[ ho sw cmd ] #TODO: hide report workaround
       @cmd_args_multipliers = {
           :memory_limit => add_degrees(%w[ B b ]),
           :time_limit => add_degrees(%w[ s m h d ]),
