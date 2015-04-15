@@ -58,13 +58,21 @@ module Utils
 		%w[ . .. .idea .git ].include? dir
   end
 
-  def self.get_compiler_for(extension)
-    case extension
-      when 'cpp' then GCCCompilerWrapper.new
-      when 'pas' then PascalCompilerWrapper.new
-      when 'rb' then RubyInterpreterWrapper.new
-      when 'py' then PythonInterpreterWrapper.new
-      else raise 'Wrong extension for test file!'
+  def self.get_compiler_for(source)
+    if File.file?(source)
+      extension = file_extension(source)
+
+      case extension
+        when 'cpp' then GCCCompilerWrapper.new
+        when 'pas' then PascalCompilerWrapper.new
+        when 'abc' then PascalABCCompilerWrapper.new
+        when 'cs' then CSharpCompilerWrapper.new
+        when 'rb' then RubyInterpreterWrapper.new
+        when 'py' then PythonInterpreterWrapper.new
+        else raise 'Wrong extension for test file!'
+      end
+    else
+      JavaInterpretableWrapper.new
     end
   end
 
@@ -77,16 +85,11 @@ module Utils
   end
 
   def self.compile_for_test(test_name)
-    test_name = get_dir_name(test_name)
+    tests_folder = "src/#{get_dir_name(test_name)}"
 
-    Dir.foreach("src/#{test_name}") do |file|
-      unless system_dir?(file)
-        in_ext = file_extension(file)
-        input, output = "src/#{test_name}/#{file}", "bin/#{file.delete('.' + in_ext)}"
-
-        out_ext = if %w[ cpp pas cs ].include? in_ext then 'exe' else in_ext end
-
-        get_compiler_for(in_ext).compile(input, "#{output}.#{out_ext}")
+    Dir.foreach(tests_folder) do |source|
+      unless system_dir?(source)
+        get_compiler_for("#{tests_folder}/#{source}").compile("#{tests_folder}/#{source}", 'bin/')
       end
     end
   end
@@ -122,7 +125,9 @@ module Utils
     end
 
     def compile(source, output)
-      system("#{@cmd} #{@out_arg}#{output} #{source} 1>nul 2>nul")
+      outname = File.basename(source.delete(Utils.file_extension(source))) + '.exe'
+
+      system("#{@cmd} #{@out_arg}#{output + '/' + outname} #{source} 1>nul 2>nul")
     end
 
   end
@@ -138,7 +143,48 @@ module Utils
   class PascalCompilerWrapper < CompilerWrapper
 
     def initialize
-      super 'fpc', '-o '
+      super 'fpc', '-o'
+    end
+
+    def compile(input, output)
+      super
+
+      File.delete(output + File.basename(input).delete('.pas') + '.o')
+    end
+
+  end
+
+  class PascalABCCompilerWrapper < CompilerWrapper
+
+    def initialize
+      super 'pabcnetc', ''
+    end
+
+    def compile(input, output)
+      basename = File.basename(input.delete(Utils.file_extension(input)))
+      source = basename + '.pas'
+      compiled = basename + '.exe'
+
+      FileUtils.cp(input, source)
+
+      system("#{@cmd} #{source} 1>nul")
+
+      FileUtils.cp(compiled, output + compiled)
+      [source, compiled].each{ |filename| File.delete(filename) }
+    end
+
+  end
+
+  class CSharpCompilerWrapper < CompilerWrapper
+
+    def initialize
+      super 'csc', '/out:'
+    end
+
+    def compile(input, output)
+      Dir.chdir(input.split(/\//).slice(0, 2).join('/'))
+      super File.basename(input), '../../' + output
+      Dir.chdir('../..')
     end
 
   end
@@ -150,7 +196,7 @@ module Utils
     end
 
     def compile(source, output)
-      FileUtils.cp(source, output)
+      FileUtils.cp(source, output + '/' + File.basename(source))
     end
 
   end
@@ -167,6 +213,23 @@ module Utils
 
     def initialize
       super 'python'
+    end
+
+  end
+
+  class JavaInterpretableWrapper < InterpretableCompilerWrapper
+
+    def initialize
+      super 'java'
+    end
+
+    def compile(source, output)
+      file = (Dir.entries(source) - %w[ . .. ])[0]
+      binary = output + File.basename(source)
+
+      FileUtils::mkdir_p(binary)
+
+      system("javac -d #{binary} #{source + '/' + file} 1>nul 2>nul")
     end
 
   end
@@ -227,14 +290,23 @@ module Utils
 
     def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
       executable = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
-        filename =~ /#{sprintf('%02d', test_order)}\.(.*)$/
+        filename =~ /#{sprintf('%02d', test_order)}(\.(.*))?$/
       end
 
       raise "Wrong test order: #{test_order.inspect}" if executable.nil?
 
-      ext = Utils.file_extension(executable)
-      unless ext == 'exe'
-        executable = Utils.get_compiler_for(ext).cmd + ' ' + executable
+      if File.file?(executable)
+        ext = Utils.file_extension(executable)
+
+        unless ext == 'exe'
+
+          executable = Utils.get_compiler_for(executable).cmd + ' ' + executable
+          flags.push(:command)
+        end
+      else
+        file = (Dir.entries(executable) - %w[ . .. ])[0]
+        executable = "java -classpath #{executable}/ #{file[0 .. file.length - 7]}"
+
         flags.push(:command)
       end
 
