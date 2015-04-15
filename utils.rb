@@ -274,7 +274,7 @@ module Utils
     @features
 
     def parse_report(rpt)
-
+      raise 'Virtual method called!'
     end
 
     def arg_for_property?(properties, arg)
