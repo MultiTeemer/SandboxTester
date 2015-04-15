@@ -325,8 +325,7 @@ module Utils
     attr_reader :cmd_args,
                 :cmd_args_multipliers,
                 :cmd_flags,
-                :tmp_file_name,
-                :environment_mods
+                :tmp_file_name
 
     def initialize(path)
       @path = path
@@ -369,6 +368,10 @@ module Utils
   class CatsSpawnerWrapper < SpawnerWrapper
 
     private
+
+    @environment_mods
+
+    attr_accessor :environment_mods
 
     def add_degrees(units)
       degrees = %w[ da h k Ki M Mi G Gi T Ti P Pi d c m u n p f ]
@@ -548,7 +551,6 @@ module Utils
           :memory_limit => %w[ K M ],
           :time_limit => %w[ s ms ],
       }
-      @environment_mods = [nil]
     end
 
     def get_correct_value_for(arg)
