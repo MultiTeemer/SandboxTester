@@ -533,12 +533,6 @@ module Utils
 
   class PCMS2SpawnerWrapper < SpawnerWrapper
 
-    private
-
-    def fractional_s_to_ms(secs)
-      (secs * 1000).to_i.to_s
-    end
-
     protected
 
     def parse_report(rpt)
