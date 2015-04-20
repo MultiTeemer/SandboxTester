@@ -31,7 +31,7 @@ class EnvironmentTests < Utils::SpawnerTester
     Utils.spawner.environment_mods.each do |mode|
       out = FileHandler.new('tmp.txt')
       args = {
-          :output => out.file_name,
+          :output => out.path,
           :environment_mode => mode,
       }
 
@@ -75,7 +75,7 @@ class EnvironmentTests < Utils::SpawnerTester
     out_handler = FileHandler.new('out.txt')
     args = {
         :environment_vars => [var_name + '=' + var_value],
-        :output => out_handler.file_name,
+        :output => out_handler.path,
     }
 
     exit_success?(run_spawner_test(1, args), 1)

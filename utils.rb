@@ -248,31 +248,35 @@ module Utils
 
       private
 
-      @file_name
+      @path
 
       public
 
-      attr_reader :file_name
+      attr_reader :path
 
-      def initialize(file_name, write_data = nil)
-        @file_name = file_name
+      def initialize(path, write_data = nil)
+        @path = path
         write(write_data)
       end
 
       def read
-        IO.read(@file_name)
+        IO.read(@path)
       end
 
       def write(write_data)
-        File.open(@file_name, 'w') { |f| f.write(write_data) } unless write_data.nil?
+        File.open(@path, 'w') { |f| f.write(write_data) } unless write_data.nil?
       end
 
       def clear
-        File.open(@file_name, 'w') { |f| f.write(nil) }
+        File.open(@path, 'w') { |f| f.write(nil) }
       end
 
       def to_s
-        @file_name
+        @path
+      end
+
+      def delete
+        FileUtils.rm(@path)
       end
 
     end
