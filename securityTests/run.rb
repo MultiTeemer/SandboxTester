@@ -14,12 +14,50 @@ class SecurityTests < Utils::SpawnerTester
         },
     ]
 
-    tests_count.each do |i|
+    (1..4).each do |i|
       args.each_index do |j|
         run_spawner_test(i, args[j])
       end
     end
 
+    out = FileHandler.new('out.txt')
+
+    (5..8).each do |i|
+      run_spawner_test(i, { :output => out.path })
+
+      aseq(out.read.to_i, 0, i)
+
+      out.clear
+    end
+
+    out.delete
+
+    #9th test
+
+    sibling_dir = 'test'
+
+    run_spawner_test(9, {}, [], [sibling_dir])
+
+    success = !Dir.entries('..').include?(sibling_dir)
+
+    Dir.rmdir("../#{sibling_dir}")
+
+    astrue(success, 9)
+
+    #10th test
+
+    Dir.mkdir("../#{sibling_dir}")
+
+    file_content = '123'
+    file = FileHandler.new("../#{sibling_dir}/file.txt", file_content)
+
+    run_spawner_test(10, {}, [], [file.path])
+
+    success = file.read == file_content
+
+    Dir.rm_rf("../#{sibling_dir}")
+
+    astrue(success, 10)
   end
 
   def test_destabilization
