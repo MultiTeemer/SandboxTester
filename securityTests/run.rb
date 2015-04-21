@@ -74,4 +74,16 @@ class SecurityTests < Utils::SpawnerTester
     end
   end
 
+  def test_interruns_communications
+    tests_count.each do |i|
+      out = FileHandler.new('out.txt')
+      rpts = run_spawner_test(i, { :output => out.path })
+
+      success = !out.read == 'some data'
+      out.delete
+
+      astrue(success, i)
+    end
+  end
+
 end

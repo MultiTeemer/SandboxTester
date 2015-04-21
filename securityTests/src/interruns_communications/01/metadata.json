@@ -1,0 +1,5 @@
+{
+  "test": {
+    "order": ["writer.rb", "reader.rb"]
+  }
+}
