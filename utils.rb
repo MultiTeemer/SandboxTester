@@ -2,6 +2,7 @@ module Utils
 
   require 'test/unit'
   require 'fileutils'
+  require 'json'
 
   APPLICATION_FIELD = :application
   PARAMETERS_FIELD  = :parameters
@@ -59,7 +60,6 @@ module Utils
   end
 
   def self.get_compiler_for(source)
-    if File.file?(source)
       extension = file_extension(source)
 
       case extension
@@ -71,13 +71,14 @@ module Utils
         when 'py' then PythonInterpreterWrapper.new
         else raise 'Wrong extension for test file!'
       end
-    else
-      JavaInterpretableWrapper.new
-    end
   end
 
   def self.file_extension(filename)
     File.extname(filename).delete('.')
+  end
+
+  def self.file_name(path)
+    File.basename(path).delete(File.extname(path))
   end
 
   def self.get_dir_name(test_name)
@@ -89,7 +90,32 @@ module Utils
 
     Dir.foreach(tests_folder) do |source|
       unless system_dir?(source)
-        get_compiler_for("#{tests_folder}/#{source}").compile("#{tests_folder}/#{source}", 'bin/')
+        full_path = "#{tests_folder}/#{source}"
+        output_path = 'bin/'
+
+        if File.file?(full_path)
+          get_compiler_for(full_path).compile(full_path, output_path)
+        else
+          json = Dir.entries(full_path).select { |entry| entry == 'metadata.json' }
+
+          if json.length == 0
+            JavaInterpretableWrapper.new.compile(full_path, output_path)
+          else
+            test_metadata = JSON.parse(IO.read(full_path + '/' + json[0]))['test']
+            order = test_metadata['order']
+            out = output_path + source
+
+            Dir.mkdir(out) unless Dir::exist?(out)
+
+            raise 'Order of file doesn\'t specified!' if order.nil?
+
+            order.each_index do |i|
+              curr = full_path + '/' + order[i]
+
+              get_compiler_for(curr).compile(curr, out, sprintf('%02d', i))
+            end
+          end
+        end
       end
     end
   end
@@ -124,10 +150,10 @@ module Utils
       @out_arg = output_argument
     end
 
-    def compile(source, output)
-      outname = File.basename(source.delete(Utils.file_extension(source))) + '.exe'
+    def compile(source, output_dir, output_name = nil)
+      outname = (output_name || Utils.file_name(source)) + '.exe'
 
-      system("#{@cmd} #{@out_arg}#{output + '/' + outname} #{source} 1>nul 2>nul")
+      system("#{@cmd} #{@out_arg}#{output_dir + '/' + outname} #{source} 1>nul 2>nul")
     end
 
   end
@@ -146,10 +172,10 @@ module Utils
       super 'fpc', '-o'
     end
 
-    def compile(input, output)
+    def compile(source, output_dir, output_name = nil)
       super
 
-      File.delete(output + File.basename(input).delete('.pas') + '.o')
+      File.delete(output_dir + Utils.file_name(source) + '.o')
     end
 
   end
@@ -160,17 +186,17 @@ module Utils
       super 'pabcnetc', ''
     end
 
-    def compile(input, output)
-      basename = File.basename(input.delete(Utils.file_extension(input)))
-      source = basename + '.pas'
+    def compile(source, output_dir, output_name = nil)
+      basename = output_name || Utils.file_name(source)
+      source_copy = basename + '.pas'
       compiled = basename + '.exe'
 
-      FileUtils.cp(input, source)
+      FileUtils.cp(source, source_copy)
 
-      system("#{@cmd} #{source} 1>nul")
+      system("#{@cmd} #{source_copy} 1>nul")
 
-      FileUtils.cp(compiled, output + compiled)
-      [source, compiled].each{ |filename| File.delete(filename) }
+      FileUtils.cp(compiled, output_dir + '/' + compiled)
+      [source_copy, compiled].each{ |filename| File.delete(filename) }
     end
 
   end
@@ -181,9 +207,9 @@ module Utils
       super 'csc', '/out:'
     end
 
-    def compile(input, output)
-      Dir.chdir(input.split(/\//).slice(0, 2).join('/'))
-      super File.basename(input), '../../' + output
+    def compile(source, output_dir, output_name = nil)
+      Dir.chdir(source.split(/\//).slice(0, 2).join('/'))
+      super File.basename(source), '../../' + output_dir, output_name
       Dir.chdir('../..')
     end
 
@@ -195,8 +221,11 @@ module Utils
       super cmd, nil
     end
 
-    def compile(source, output)
-      FileUtils.cp(source, output + '/' + File.basename(source))
+    def compile(source, output_dir, output_name = nil)
+      compiled = output_name || File.basename(source)
+      compiled += File.extname(source) if output_name
+
+      FileUtils.cp(source, output_dir + '/' + compiled)
     end
 
   end
@@ -308,10 +337,16 @@ module Utils
           flags.push(:command)
         end
       else
-        file = (Dir.entries(executable) - %w[ . .. ])[0]
-        executable = "java -classpath #{executable}/ #{file[0 .. file.length - 7]}"
+        files = Dir.entries(executable) - %w[ . .. ]
 
-        flags.push(:command)
+        if files.length == 1
+          file = (Dir.entries(executable) - %w[ . .. ])[0]
+          executable = "java -classpath #{executable}/ #{file[0 .. file.length - 7]}"
+
+          flags.push(:command)
+        else
+          return files.sort.map { |exec| Utils.spawner.run(exec, args, flags, argv) }
+        end
       end
 
       Utils.spawner.run(executable, args, flags, argv)
