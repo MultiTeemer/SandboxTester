@@ -319,7 +319,15 @@ module Utils
       FileHandler.new(file_name, write_data)
     end
 
+    @one_test
+
     public
+
+    def initialize(test_method_name, test = nil)
+      super test_method_name
+
+      @one_test = test
+    end
 
     def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
       executable = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|

@@ -27,6 +27,10 @@ OptionParser.new do |opts|
     options[:type] = type if %w[ cats cats_old pcms2 ].include? type
   end
 
+  opts.on('--one=MANDATORY', '', 'Run single test') do |test|
+    options[:single] = test
+  end
+
 end.parse!
 
 options[:type] = 'cats' if options[:type].nil?
@@ -53,7 +57,7 @@ options[:tests].each do |tag, cat|
   class_name[0] = name[0].upcase
 
   tests_names.each do |test_name|
-    test_suit << Object.const_get("#{class_name}Tests").new("test_#{test_name}")
+    test_suit << Object.const_get("#{class_name}Tests").new("test_#{test_name}", options[:single])
   end
 
 end

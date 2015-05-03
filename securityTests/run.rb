@@ -61,7 +61,11 @@ class SecurityTests < Utils::SpawnerTester
   end
 
   def test_destabilization
-    tests_count.each { |i| run_spawner_test(i) }
+    unless @one_test.nil?
+      run_spawner_test(@one_test.to_i)
+    else
+      tests_count.each { |i| run_spawner_test(i) }
+    end
   end
 
   def test_exceptions
