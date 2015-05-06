@@ -19,6 +19,10 @@ module Args
       @val.to_s
     end
 
+    def to_f
+      @val.to_f
+    end
+
     def self.wrong_value
       raise 'Virtual method called!'
     end
