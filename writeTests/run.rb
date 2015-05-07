@@ -1,12 +1,13 @@
 require 'test/unit'
 require './utils.rb'
 require './args.rb'
+require './tester.rb'
 
-class WriteTests < Utils::SpawnerTester
+class WriteTests < Tester::SpawnerTester
 
   def test_write
     tests_count.each do |test_order|
-      asindel(1, run_spawner_test(test_order)[Utils::WRITTEN_FIELD], 0.1, 0)
+      asindel(1, run_spawner_test(test_order)[Constants::WRITTEN_FIELD], 0.1, 0)
     end
   end
 
@@ -15,8 +16,8 @@ class WriteTests < Utils::SpawnerTester
 
     tests_count.each do |test_order|
       aseq(
-          Utils::WRITE_LIMIT_EXCEEDED_RESULT,
-          run_spawner_test(test_order, { :wl => Args::KilobyteArgument.new(1) })[Utils::TERMINATE_REASON_FIELD],
+          Constants::WRITE_LIMIT_EXCEEDED_RESULT,
+          run_spawner_test(test_order, { :wl => Args::KilobyteArgument.new(1) })[Constants::TERMINATE_REASON_FIELD],
           test_order
       )
     end
@@ -121,8 +122,8 @@ class WriteTests < Utils::SpawnerTester
 
     (2..3).each do |test_order|
       rpt = run_spawner_test(test_order, args)
-      aseq(Utils::TIME_LIMIT_EXCEEDED_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], test_order)
-      assert_not_equal(0, rpt[Utils::WRITTEN_FIELD], fail_on_th_test_msg(test_order))
+      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, rpt[Constants::TERMINATE_REASON_FIELD], test_order)
+      assert_not_equal(0, rpt[Constants::WRITTEN_FIELD], fail_on_th_test_msg(test_order))
     end
   end
 

@@ -1,8 +1,9 @@
 require 'test/unit'
 require './args.rb'
-require './utils.rb'
+require './constants.rb'
+require './tester.rb'
 
-class SecurityTests < Utils::SpawnerTester
+class SecurityTests < Tester::SpawnerTester
 
   def test_file_system
     args = [
@@ -16,6 +17,7 @@ class SecurityTests < Utils::SpawnerTester
 
     (1..4).each do |i|
       args.each_index do |j|
+        puts args[j]
         run_spawner_test(i, args[j])
       end
     end
@@ -25,7 +27,7 @@ class SecurityTests < Utils::SpawnerTester
     (5..8).each do |i|
       run_spawner_test(i, { :output => out.path })
 
-      aseq(out.read.to_i, 0, i)
+      aseq(0, out.read.to_i, i)
 
       out.clear
     end
@@ -71,7 +73,7 @@ class SecurityTests < Utils::SpawnerTester
   def test_exceptions
     tests_count.each do |i|
       if i % 2 == 1
-        aseq(Utils::ABNORMAL_EXIT_PROCESS_RESULT, run_spawner_test(i)[Utils::TERMINATE_REASON_FIELD], i)
+        aseq(Constants::ABNORMAL_EXIT_PROCESS_RESULT, run_spawner_test(i)[Constants::TERMINATE_REASON_FIELD], i)
       else
         exit_success?(run_spawner_test(i), i)
       end

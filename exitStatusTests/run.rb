@@ -1,26 +1,27 @@
 require 'test/unit'
-require './utils.rb'
+require './tester.rb'
+require './constants.rb'
 
-class ExitStatusTests < Utils::SpawnerTester
+class ExitStatusTests < Tester::SpawnerTester
 
   def test_main
     statuses = [
-      Utils::STACK_OVERFLOW_EXIT_STATUS,
-      Utils::ACCESS_VIOLATION_EXIT_STATUS,
-      Utils::INT_DIVIDE_BY_ZERO_EXIT_STATUS,
-      Utils::PRIVILEGED_INSTRUCTION_EXIT_STATUS,
-      Utils::STACK_OVERFLOW_EXIT_STATUS,
-      Utils::STACK_OVERFLOW_EXIT_STATUS,
-      Utils::ACCESS_VIOLATION_EXIT_STATUS, #Utils::ARRAY_BOUNDS_EXCEEDED_EXIT_STATUS, TODO: figure out
-      Utils::ACCESS_VIOLATION_EXIT_STATUS,
-      Utils::ACCESS_VIOLATION_EXIT_STATUS,
-      Utils::ACCESS_VIOLATION_EXIT_STATUS,
+      Constants::STACK_OVERFLOW_EXIT_STATUS,
+      Constants::ACCESS_VIOLATION_EXIT_STATUS,
+      Constants::INT_DIVIDE_BY_ZERO_EXIT_STATUS,
+      Constants::PRIVILEGED_INSTRUCTION_EXIT_STATUS,
+      Constants::STACK_OVERFLOW_EXIT_STATUS,
+      Constants::STACK_OVERFLOW_EXIT_STATUS,
+      Constants::ACCESS_VIOLATION_EXIT_STATUS, #Utils::ARRAY_BOUNDS_EXCEEDED_EXIT_STATUS, TODO: figure out
+      Constants::ACCESS_VIOLATION_EXIT_STATUS,
+      Constants::ACCESS_VIOLATION_EXIT_STATUS,
+      Constants::ACCESS_VIOLATION_EXIT_STATUS,
     ]
     tests_count.each do |i|
       rpt = run_spawner_test(i)
       idx = i - 1
-      aseq(Utils::ABNORMAL_EXIT_PROCESS_RESULT, rpt[Utils::TERMINATE_REASON_FIELD], i)
-      aseq(statuses[idx], rpt[Utils::EXIT_STATUS_FIELD], i) if idx < statuses.size
+      aseq(Constants::ABNORMAL_EXIT_PROCESS_RESULT, rpt[Constants::TERMINATE_REASON_FIELD], i)
+      aseq(statuses[idx], rpt[Constants::EXIT_STATUS_FIELD], i) if idx < statuses.size
     end
   end
 

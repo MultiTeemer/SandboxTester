@@ -1,7 +1,9 @@
 require 'test/unit'
 require './utils.rb'
+require './tester.rb'
+require './constants.rb'
 
-class CmdArgsTests < Utils::SpawnerTester
+class CmdArgsTests < Tester::SpawnerTester
 
   private
 
@@ -10,7 +12,7 @@ class CmdArgsTests < Utils::SpawnerTester
   end
 
   def compare_with_none_error(expected, rpt, test_order)
-    aseq(expected, rpt[Utils::SPAWNER_ERROR_FIELD] == Utils::NONE_ERROR_SP_ERROR, test_order)
+    aseq(expected, rpt[Constants::SPAWNER_ERROR_FIELD] == Constants::NONE_ERROR_SP_ERROR, test_order)
   end
 
   def error_on_execute?(rpt, test_order = -1)

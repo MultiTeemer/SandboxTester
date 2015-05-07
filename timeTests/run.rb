@@ -1,8 +1,10 @@
 require 'test/unit'
 require './utils.rb'
 require './args.rb'
+require './tester.rb'
+require './constants.rb'
 
-class TimeTests < Utils::SpawnerTester
+class TimeTests < Tester::SpawnerTester
 
   def test_idleness_benchmark
     sep = '-' * 30
@@ -18,10 +20,10 @@ class TimeTests < Utils::SpawnerTester
                 :load_ratio => Args::PercentArgument.new(m)
             }
         )
-        case rpt[Utils::TERMINATE_REASON_FIELD]
-          when Utils::IDLENESS_LIMIT_EXCEEDED_RESULT then r = m
-          when Utils::TIME_LIMIT_EXCEEDED_RESULT then l = m
-          else aseq(true, rpt[Utils::TERMINATE_REASON_FIELD], order)
+        case rpt[Constants::TERMINATE_REASON_FIELD]
+          when Constants::IDLENESS_LIMIT_EXCEEDED_RESULT then r = m
+          when Constants::TIME_LIMIT_EXCEEDED_RESULT then l = m
+          else aseq(true, rpt[Constants::TERMINATE_REASON_FIELD], order)
         end
       end
       puts sep, "Benchmark for #{%w[ input output ][order - 1]}: #{l}-#{r}%", sep
@@ -35,7 +37,7 @@ class TimeTests < Utils::SpawnerTester
   def test_time_limit
     params = [ { :time_limit => Args::SecondsArgument.new(1) } ] * 3
     params.each_index do |i|
-      aseq(Utils::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Utils::TERMINATE_REASON_FIELD], i)
+      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
     end
   end
 
@@ -44,7 +46,7 @@ class TimeTests < Utils::SpawnerTester
 
     params = [ { :deadline => Args::SecondsArgument.new(1) } ] * 4
     params.each_index do |i|
-      aseq(Utils::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Utils::TERMINATE_REASON_FIELD], i)
+      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
     end
   end
 

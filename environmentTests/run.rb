@@ -1,7 +1,9 @@
 require 'test/unit'
 require './utils.rb'
+require './tester.rb'
+require './constants.rb'
 
-class EnvironmentTests < Utils::SpawnerTester
+class EnvironmentTests < Tester::SpawnerTester
 
   def test_modes
     omit_unless(Utils.spawner.has_feature?('environment_modes'))
