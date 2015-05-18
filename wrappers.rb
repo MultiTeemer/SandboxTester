@@ -15,7 +15,6 @@ module Wrappers
     @cmd_args_multipliers
     @cmd_flags
     @tmp_file_name
-    @environment_mods
     @features
 
     def parse_report(rpt)
