@@ -4,7 +4,7 @@ require './constants.rb'
 
 module Tester
   
-  class SpawnerTester < Test::Unit::TestCase
+  class SandboxTester < Test::Unit::TestCase
 
     private
 
@@ -70,7 +70,7 @@ module Tester
       @one_test = test
     end
 
-    def run_spawner_test(test_order = nil, args = {}, flags = [], argv = [])
+    def run_sandbox_test(test_order = nil, args = {}, flags = [], argv = [])
       executable = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
         filename =~ /#{sprintf('%02d', test_order)}(\.(.*))?$/
       end

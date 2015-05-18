@@ -3,7 +3,7 @@ require './utils.rb'
 require './tester.rb'
 require './constants.rb'
 
-class CmdArgsTests < Tester::SpawnerTester
+class CmdArgsTests < Tester::SandboxTester
 
   private
 
@@ -53,12 +53,12 @@ class CmdArgsTests < Tester::SpawnerTester
           #puts correct_args
           #puts run_spawner_test(item[:order], wrong_args)
           #puts '-' * 30
-          item[:func].call(run_spawner_test(item[:order], correct_args), length)
+          item[:func].call(run_sandbox_test(item[:order], correct_args), length)
           #puts '-' * 30 + 'wrong'
           #puts wrong_args
           #puts run_spawner_test(item[:order], wrong_args)
           #puts '-' * 30
-          error_on_execute?(run_spawner_test(item[:order], wrong_args)) if wrong_args.size > 0
+          error_on_execute?(run_sandbox_test(item[:order], wrong_args)) if wrong_args.size > 0
         end
       end
     end
@@ -68,7 +68,7 @@ class CmdArgsTests < Tester::SpawnerTester
     stuff.each do |item|
       Utils.spawner.cmd_args_multipliers.each do |cat, arr|
         arr.push('').each do |mult|
-          item[:func].call(run_spawner_test(item[:order], {cat => "1#{mult} "}))
+          item[:func].call(run_sandbox_test(item[:order], {cat => "1#{mult} "}))
         end
       end
     end
@@ -79,7 +79,7 @@ class CmdArgsTests < Tester::SpawnerTester
     stuff.each do |item|
       (0..flags.size).each do |length|
         flags.combination(length).each do |run_flags|
-          item[:func].call(run_spawner_test(item[:order], {}, run_flags))
+          item[:func].call(run_sandbox_test(item[:order], {}, run_flags))
         end
       end
     end
@@ -92,7 +92,7 @@ class CmdArgsTests < Tester::SpawnerTester
         flags.combination(length).each do |run_flags|
           args = {}
           run_flags.each { |flag| args[flag.to_sym] = 1 }
-          error_on_execute?(run_spawner_test(test_order, args)) if test_order.nil? or args.size > 0
+          error_on_execute?(run_sandbox_test(test_order, args)) if test_order.nil? or args.size > 0
         end
       end
     end
@@ -111,8 +111,8 @@ class CmdArgsTests < Tester::SpawnerTester
           end
           (0..flags.size).each do |flags_count|
             flags.combination(flags_count).each do |run_flags|
-              item[:func].call(run_spawner_test(item[:order], run_args, run_flags))
-              error_on_execute?(run_spawner_test(item[:order], error_args, run_flags)) if error_args.size > 0
+              item[:func].call(run_sandbox_test(item[:order], run_args, run_flags))
+              error_on_execute?(run_sandbox_test(item[:order], error_args, run_flags)) if error_args.size > 0
             end
           end
         end

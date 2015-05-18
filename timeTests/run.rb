@@ -4,7 +4,7 @@ require './args.rb'
 require './tester.rb'
 require './constants.rb'
 
-class TimeTests < Tester::SpawnerTester
+class TimeTests < Tester::SandboxTester
 
   def test_idleness_benchmark
     sep = '-' * 30
@@ -12,7 +12,7 @@ class TimeTests < Tester::SpawnerTester
       l, r = 0.0, 100.0
       while r - l > 1
         m = (l + r) / 2
-        rpt = run_spawner_test(
+        rpt = run_sandbox_test(
             order,
             {
                 :idleness => Args::SecondsArgument.new(1),
@@ -37,7 +37,7 @@ class TimeTests < Tester::SpawnerTester
   def test_time_limit
     params = [ { :time_limit => Args::SecondsArgument.new(1) } ] * 3
     params.each_index do |i|
-      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
+      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_sandbox_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
     end
   end
 
@@ -46,7 +46,7 @@ class TimeTests < Tester::SpawnerTester
 
     params = [ { :deadline => Args::SecondsArgument.new(1) } ] * 4
     params.each_index do |i|
-      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_spawner_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
+      aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_sandbox_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
     end
   end
 

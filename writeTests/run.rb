@@ -3,11 +3,11 @@ require './utils.rb'
 require './args.rb'
 require './tester.rb'
 
-class WriteTests < Tester::SpawnerTester
+class WriteTests < Tester::SandboxTester
 
   def test_write
     tests_count.each do |test_order|
-      asindel(1, run_spawner_test(test_order)[Constants::WRITTEN_FIELD], 0.1, 0)
+      asindel(1, run_sandbox_test(test_order)[Constants::WRITTEN_FIELD], 0.1, 0)
     end
   end
 
@@ -17,7 +17,7 @@ class WriteTests < Tester::SpawnerTester
     tests_count.each do |test_order|
       aseq(
           Constants::WRITE_LIMIT_EXCEEDED_RESULT,
-          run_spawner_test(test_order, { :wl => Args::KilobyteArgument.new(1) })[Constants::TERMINATE_REASON_FIELD],
+          run_sandbox_test(test_order, { :wl => Args::KilobyteArgument.new(1) })[Constants::TERMINATE_REASON_FIELD],
           test_order
       )
     end
@@ -52,7 +52,7 @@ class WriteTests < Tester::SpawnerTester
       args[:output] = out_file_name if output_provided
       args[:error] = err_file_name if error_provided
 
-      rpt = run_spawner_test(test_number, args)
+      rpt = run_sandbox_test(test_number, args)
 
       exit_success?(rpt, test_number)
 
@@ -97,7 +97,7 @@ class WriteTests < Tester::SpawnerTester
       args[:output] = in_file_name if output_provided
       args[:error] = in_file_name if error_provided
 
-      rpt = run_spawner_test(streams_looping[i][:order], args)
+      rpt = run_sandbox_test(streams_looping[i][:order], args)
 
       exit_success?(rpt, test_number)
 
@@ -118,10 +118,10 @@ class WriteTests < Tester::SpawnerTester
         :time_limit => Args::MillisecondsArgument.new(500),
     }
 
-    exit_success?(run_spawner_test(1, args)) # TODO: why? may be it should give time limit exceeded for example?
+    exit_success?(run_sandbox_test(1, args)) # TODO: why? may be it should give time limit exceeded for example?
 
     (2..3).each do |test_order|
-      rpt = run_spawner_test(test_order, args)
+      rpt = run_sandbox_test(test_order, args)
       aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, rpt[Constants::TERMINATE_REASON_FIELD], test_order)
       assert_not_equal(0, rpt[Constants::WRITTEN_FIELD], fail_on_th_test_msg(test_order))
     end
@@ -129,7 +129,7 @@ class WriteTests < Tester::SpawnerTester
 
   def test_redirect_and_hide_output
     out_handler = FileHandler.new('out.txt')
-    exit_success?(run_spawner_test(1, { :output => out_handler.path }, [ :hide_output ]))
+    exit_success?(run_sandbox_test(1, { :output => out_handler.path }, [ :hide_output ]))
     astrue(out_handler.read.empty?, 1)
   end
 

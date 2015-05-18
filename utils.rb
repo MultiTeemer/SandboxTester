@@ -84,7 +84,7 @@ module Utils
   def self.init_spawner(type, path)
     @spawner = (case type
       when 'cats' then Wrappers::CatsSpawnerWrapper
-      when 'pcms2' then Wrappers::PCMS2SpawnerWrapper
+      when 'pcms2' then Wrappers::PCMS2RunWrapper
       else nil
     end).new(path)
   end

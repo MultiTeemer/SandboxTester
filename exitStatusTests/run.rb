@@ -2,7 +2,7 @@ require 'test/unit'
 require './tester.rb'
 require './constants.rb'
 
-class ExitStatusTests < Tester::SpawnerTester
+class ExitStatusTests < Tester::SandboxTester
 
   def test_main
     statuses = [
@@ -18,7 +18,7 @@ class ExitStatusTests < Tester::SpawnerTester
       Constants::ACCESS_VIOLATION_EXIT_STATUS,
     ]
     tests_count.each do |i|
-      rpt = run_spawner_test(i)
+      rpt = run_sandbox_test(i)
       idx = i - 1
       aseq(Constants::ABNORMAL_EXIT_PROCESS_RESULT, rpt[Constants::TERMINATE_REASON_FIELD], i)
       aseq(statuses[idx], rpt[Constants::EXIT_STATUS_FIELD], i) if idx < statuses.size

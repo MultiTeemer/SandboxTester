@@ -3,7 +3,7 @@ require './utils.rb'
 require './tester.rb'
 require './constants.rb'
 
-class EnvironmentTests < Tester::SpawnerTester
+class EnvironmentTests < Tester::SandboxTester
 
   def test_modes
     omit_unless(Utils.spawner.has_feature?('environment_modes'))
@@ -37,7 +37,7 @@ class EnvironmentTests < Tester::SpawnerTester
           :environment_mode => mode,
       }
 
-      exit_success?(run_spawner_test(variables_counter_idx, args), test_counter)
+      exit_success?(run_sandbox_test(variables_counter_idx, args), test_counter)
 
       vars_count = out.read.to_i
 
@@ -45,7 +45,7 @@ class EnvironmentTests < Tester::SpawnerTester
 
       #check vars count
       env_vars.each do |vars|
-        exit_success?(run_spawner_test(variables_counter_idx, args.merge(create_args.call(vars))), test_counter)
+        exit_success?(run_sandbox_test(variables_counter_idx, args.merge(create_args.call(vars))), test_counter)
 
         astrue(vars_count + vars.keys.size == out.read.to_i, test_counter)
 
@@ -58,7 +58,7 @@ class EnvironmentTests < Tester::SpawnerTester
 
       #check vars correctness
       env_vars.each do |vars|
-        exit_success?(run_spawner_test(variables_printer_idx, args.merge(create_args.call(vars))), test_counter)
+        exit_success?(run_sandbox_test(variables_printer_idx, args.merge(create_args.call(vars))), test_counter)
 
         vars.each { |k, v| aseq(v, get_var.call(k), test_counter) }
 
@@ -66,7 +66,7 @@ class EnvironmentTests < Tester::SpawnerTester
       end
 
       #check vars replacement
-      exit_success?(run_spawner_test(variables_printer_idx, args.merge({ :environment_vars => 'OS=12345' })), test_counter)
+      exit_success?(run_sandbox_test(variables_printer_idx, args.merge({ :environment_vars => 'OS=12345' })), test_counter)
       aseq('12345', get_var.call('OS'), test_counter)
     end
   end
@@ -80,9 +80,9 @@ class EnvironmentTests < Tester::SpawnerTester
         :output => out_handler.path,
     }
 
-    exit_success?(run_spawner_test(1, args), 1)
+    exit_success?(run_sandbox_test(1, args), 1)
 
-    run_spawner_test(2, args, [], [var_name])
+    run_sandbox_test(2, args, [], [var_name])
 
     aseq(var_value, out_handler.read, 2)
 
@@ -92,10 +92,10 @@ class EnvironmentTests < Tester::SpawnerTester
         :environment_vars => vars,
     }
 
-    exit_success?(run_spawner_test(1, args), 3)
+    exit_success?(run_sandbox_test(1, args), 3)
 
     ids.each do |id|
-      run_spawner_test(2, args, [], [var_name + id])
+      run_sandbox_test(2, args, [], [var_name + id])
       aseq(var_value, out_handler.read, 4)
     end
   end

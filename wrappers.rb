@@ -3,7 +3,7 @@ require './constants.rb'
 
 module Wrappers
 
-  class SpawnerWrapper
+  class SandboxWrapper
 
     protected
 
@@ -87,7 +87,7 @@ module Wrappers
 
   end
 
-  class CatsSpawnerWrapper < SpawnerWrapper
+  class CatsSpawnerWrapper < SandboxWrapper
 
     private
 
@@ -181,7 +181,7 @@ module Wrappers
 
   end
 
-  class PCMS2SpawnerWrapper < SpawnerWrapper
+  class PCMS2RunWrapper < SandboxWrapper
 
     protected
 

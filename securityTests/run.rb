@@ -3,7 +3,7 @@ require './args.rb'
 require './constants.rb'
 require './tester.rb'
 
-class SecurityTests < Tester::SpawnerTester
+class SecurityTests < Tester::SandboxTester
 
   def test_file_system
     args = [
@@ -18,14 +18,14 @@ class SecurityTests < Tester::SpawnerTester
     (1..4).each do |i|
       args.each_index do |j|
         puts args[j]
-        run_spawner_test(i, args[j])
+        run_sandbox_test(i, args[j])
       end
     end
 
     out = FileHandler.new('out.txt')
 
     (5..8).each do |i|
-      run_spawner_test(i, { :output => out.path })
+      run_sandbox_test(i, { :output => out.path })
 
       aseq(0, out.read.to_i, i)
 
@@ -38,7 +38,7 @@ class SecurityTests < Tester::SpawnerTester
 
     sibling_dir = 'test'
 
-    run_spawner_test(9, {}, [], [sibling_dir])
+    run_sandbox_test(9, {}, [], [sibling_dir])
 
     success = !Dir.entries('..').include?(sibling_dir)
 
@@ -53,7 +53,7 @@ class SecurityTests < Tester::SpawnerTester
     file_content = '123'
     file = FileHandler.new("../#{sibling_dir}/file.txt", file_content)
 
-    run_spawner_test(10, {}, [], [file.path])
+    run_sandbox_test(10, {}, [], [file.path])
 
     success = file.read == file_content
 
@@ -64,18 +64,18 @@ class SecurityTests < Tester::SpawnerTester
 
   def test_destabilization
     unless @one_test.nil?
-      run_spawner_test(@one_test.to_i)
+      run_sandbox_test(@one_test.to_i)
     else
-      tests_count.each { |i| run_spawner_test(i) }
+      tests_count.each { |i| run_sandbox_test(i) }
     end
   end
 
   def test_exceptions
     tests_count.each do |i|
       if i % 2 == 1
-        aseq(Constants::ABNORMAL_EXIT_PROCESS_RESULT, run_spawner_test(i)[Constants::TERMINATE_REASON_FIELD], i)
+        aseq(Constants::ABNORMAL_EXIT_PROCESS_RESULT, run_sandbox_test(i)[Constants::TERMINATE_REASON_FIELD], i)
       else
-        exit_success?(run_spawner_test(i), i)
+        exit_success?(run_sandbox_test(i), i)
       end
     end
   end
@@ -83,7 +83,7 @@ class SecurityTests < Tester::SpawnerTester
   def test_interruns_communications
     tests_count.each do |i|
       out = FileHandler.new('out.txt')
-      rpts = run_spawner_test(i, { :output => out.path })
+      rpts = run_sandbox_test(i, { :output => out.path })
 
       success = !out.read == 'some data'
       out.delete
