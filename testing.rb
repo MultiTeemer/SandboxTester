@@ -21,7 +21,7 @@ OptionParser.new do |opts|
     end
   end
 
-  opts.on('--path[=OPTIONAL]', '', 'Path to testing item') { |path| options[:path] = path }
+  opts.on('--path=MANDATORY', '', 'Path to testing item') { |path| options[:path] = path }
 
   opts.on('--type=MANDATORY', '', 'Type of testing item') do |type|
     options[:type] = type if %w[ cats cats_old pcms2 ].include? type
