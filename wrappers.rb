@@ -1,5 +1,6 @@
 require './args.rb'
 require './constants.rb'
+require './sandbox_args.rb'
 
 module Wrappers
 
@@ -9,11 +10,8 @@ module Wrappers
 
     @path
     @cmd_args_mapping
-    @cmd_flags_mapping
     @cmd_arg_val_delim
     @cmd_args
-    @cmd_args_multipliers
-    @cmd_flags
     @tmp_file_name
     @features
 
@@ -21,63 +19,37 @@ module Wrappers
       raise 'Virtual method called!'
     end
 
-    def arg_for_property?(properties, arg)
-      properties = [properties] unless properties.kind_of? Array
-      properties.each { |property| return true if arg.to_s === @cmd_args_mapping[property].to_s }
-      false
-    end
-
-
     def unify(arg)
       raise 'Virtual method called!'
     end
 
-    def suffix(arg_class)
-      raise 'Virtual method called!'
-    end
+    def to_cmd(mean, val)
+      key = @cmd_args_mapping[mean]
 
-    def transform_arg(arg)
-      u_arg = unify(arg)
-      u_arg.to_s + suffix(u_arg)
+      "#{key.nil? ? nil : ('-' + key.to_s + @cmd_arg_val_delim)}#{unify(val)}"
     end
 
     public
 
     attr_reader :cmd_args,
-                :cmd_args_multipliers,
-                :cmd_flags,
                 :tmp_file_name
 
     def initialize(path)
       @path = path
       @tmp_file_name = 'tmp.txt'
       @features = []
+      @cmd_args_mapping = {}
+      @cmd_arg_val_delim = ''
     end
 
-    def run(executable, args = {}, flags = [], argv = [])
+    def run(executable, args = {}, argv = [])
       cmd = @path
-      args.each do |k, v|
-        next if v.nil?
 
-        key = (@cmd_args_mapping[k].nil? ? k : @cmd_args_mapping[k]).to_s
+      args.each { |mean, val| cmd += ' ' + to_cmd(mean, val) }
 
-        if v.kind_of?(Array)
-          cmd += v.map{ |val| " -#{key}#{@cmd_arg_val_delim}#{transform_arg(val)}" }.join(' ')
-        else
-          cmd += " -#{key}#{@cmd_arg_val_delim}#{transform_arg(v)}"
-        end
-      end
-      run_flags = flags.map{ |el| "--#{@cmd_flags_mapping[el].to_s}" unless @cmd_flags_mapping[el].nil? }
-      cmd += " #{ run_flags.join(' ') } #{ executable } #{ argv.join(' ') }"
+      cmd += " #{executable} #{argv.join(' ')}"
+
       parse_report(%x[#{cmd}])
-    end
-
-    def get_correct_value_for(arg)
-
-    end
-
-    def get_wrong_value_for(arg)
-
     end
 
     def has_feature?(feature)
@@ -92,14 +64,32 @@ module Wrappers
 
     @environment_mods
 
-    def add_degrees(units)
-      degrees = %w[ da h k Ki M Mi G Gi T Ti P Pi d c m u n p f ]
-      res = []
-      units.each { |unit| degrees.each { |degree| res.push(degree + unit) } }
-      res
+    class DeadlineArgument < SandboxArgs::TimeLimitArgument
     end
 
-    protected
+    class HideOutputFlag < SandboxArgs::FlagArgument
+
+      def initialize(val = true)
+        super Args::FlagArgument.new(val), :hide_output
+      end
+
+    end
+
+    class CommandFlag < SandboxArgs::FlagArgument
+
+      def initialize(val = true)
+        super Args::FlagArgument.new(val), :command
+      end
+
+    end
+
+    class EnvironmentModeArgument < SandboxArgs::EnumArgument
+
+      def initialize(val = nil)
+        super val, :environment_mode, %w[ inherit user-default clear ]
+      end
+
+    end
 
     def parse_report(rpt)
       res = {}
@@ -113,18 +103,21 @@ module Wrappers
     end
 
     def unify(arg)
-      arg
-    end
-
-    def suffix(arg)
       case arg
-        when Args::SecondsArgument then 's'
-        when Args::MinutesArgument then 'm'
-        when Args::MillisecondsArgument then 'ms'
-        when Args::ByteArgument then 'B'
-        when Args::KilobyteArgument then 'kB'
-        when Args::GigabyteArgument then 'GB'
-        else ''
+        when Args::TimeArgument then arg.to_ms.to_s + 'ms'
+        when Args::MemoryArgument then arg.to_bytes.to_s + 'B'
+        when Args::UserCredentialsArgument then "-u #{arg.username} -p #{arg.password}"
+        when Args::IdlenessLimitArgument then "-lr #{arg.required_load} -y #{arg.idleness}"
+        when Args::FlagArgument then
+          if arg.val.instance_of?(TrueClass)
+            '1'
+          elsif arg.val.instance_of?(FalseClass)
+            '0'
+          else
+            arg.val.to_s
+          end
+        when Args::ArrayArgument then arg.val.join('-D ')
+        else arg.to_s
       end
     end
 
@@ -134,55 +127,54 @@ module Wrappers
 
     def initialize(path)
       super
+
       @cmd_arg_val_delim = ':'
+
       @cmd_args_mapping = {
           :time_limit => :tl,
           :memory_limit => :ml,
           :write_limit => :wl,
-          :user => :u,
-          :password => :p,
           :input => :i,
           :output => :so,
           :error => :se,
-          :idleness => :y,
           :deadline => :d,
-          :load_ratio => :lr,
           :directory => :wd,
-          :environment_mode => :env,
-          :environment_vars => :D,
-      }
-      @cmd_flags_mapping = {
           :hide_output => :ho,
           :hide_report => :hr,
           :command => :cmd,
+          :environment_mode => :env,
+          :environment_vars => :D,
       }
-      @cmd_args = %w[ ml tl d wl u p runas s sr so i lr sl wd env D ]
-      @cmd_flags = %w[ ho sw cmd ] #TODO: hide report workaround
-      @cmd_args_multipliers = {
-          :memory_limit => add_degrees(%w[ B b ]),
-          :time_limit => add_degrees(%w[ s m h d ]),
-      }
+
+      @cmd_args = [
+          SandboxArgs::TimeLimitArgument,
+          SandboxArgs::MemoryLimitArgument,
+          SandboxArgs::WriteLimitArgument,
+          SandboxArgs::InputFileArgument,
+          SandboxArgs::OutputFileArgument,
+          SandboxArgs::ErrorFileArgument,
+          SandboxArgs::WorkingDirectoryArgument,
+          SandboxArgs::UserCredentialsArgument,
+          SandboxArgs::IdlenessLimitArgument,
+          DeadlineArgument,
+          HideOutputFlag,
+      ].map { |klass| klass.new }
+
       @environment_mods = %w[ inherit user-default clear ]
+
       @features = %w[
           environment_modes
           deadline
           write_limit
+          hide_report
       ]
-    end
-
-    def get_correct_value_for(arg)
-      1
-    end
-
-    def get_wrong_value_for(arg)
-      'something_wrong'
     end
 
   end
 
   class PCMS2RunWrapper < SandboxWrapper
 
-    protected
+    private
 
     def parse_report(rpt)
       res = {}
@@ -221,23 +213,6 @@ module Wrappers
       res
     end
 
-    def unify(arg)
-      case arg
-        when Args::GigabyteArgument then arg.to_bytes
-        when Args::MinutesArgument then arg.to_seconds
-        else arg
-      end
-    end
-
-    def suffix(arg)
-      case arg
-        when Args::MillisecondsArgument then 'ms'
-        when Args::KilobyteArgument then 'K'
-        when Args::MegabyteArgument then 'M'
-        else ''
-      end
-    end
-
     public
 
     def initialize(path)
@@ -255,36 +230,15 @@ module Wrappers
           :load_ratio => :r,
           :directory => :d,
           :store_in_file => :s,
+          :hide_report => :q,
           :environment_vars => :D,
       }
-      @cmd_flags_mapping = {
-          :hide_report => :q,
-      }
-      @cmd_args = %w[ t m r y d i o e s D ] #l p
-      @cmd_flags = %w[ x w 1 ] # q
-      @cmd_args_multipliers = {
-          :memory_limit => %w[ K M ],
-          :time_limit => %w[ s ms ],
-      }
-    end
+      @cmd_args = [
 
-    def get_correct_value_for(arg)
-      case true
-        when arg_for_property?(:load_ratio, arg) then 0.5
-        when arg_for_property?(:directory, arg) then '.'
-        when arg_for_property?(%i[input output error], arg) then @tmp_file_name
-        else 1
-      end
-    end
-
-    def get_wrong_value_for(arg)
-      case true
-        when arg_for_property?(%i[input output error store_in_file], arg) then '"L:\Some\Unknown\Folder\On\Not\Existing\HDD"'
-        when arg_for_property?(:load_ratio, arg) then 1
-        when arg_for_property?(%i[time_limit idleness], arg) then 0.5
-        when arg_for_property?(:directory, arg) then nil
-        else 'something_wrong'
-      end
+      ]
+      @features = %w[
+          hide_report
+      ]
     end
 
   end

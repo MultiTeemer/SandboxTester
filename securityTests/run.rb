@@ -17,7 +17,6 @@ class SecurityTests < Tester::SandboxTester
 
     (1..4).each do |i|
       args.each_index do |j|
-        puts args[j]
         run_sandbox_test(i, args[j])
       end
     end

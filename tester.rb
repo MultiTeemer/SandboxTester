@@ -70,7 +70,7 @@ module Tester
       @one_test = test
     end
 
-    def run_sandbox_test(test_order = nil, args = {}, flags = [], argv = [])
+    def run_sandbox_test(test_order = nil, args = {}, argv = [])
       executable = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
         filename =~ /#{sprintf('%02d', test_order)}(\.(.*))?$/
       end
@@ -83,7 +83,7 @@ module Tester
         unless ext == 'exe'
 
           executable = Utils.get_compiler_for(executable).cmd + ' ' + executable
-          flags.push(:command)
+          #flags.push(:command)
         end
       else
         files = Dir.entries(executable) - %w[ . .. ]
@@ -98,7 +98,7 @@ module Tester
         end
       end
 
-      Utils.sandbox.run(executable, args, flags, argv)
+      Utils.sandbox.run(executable, args, argv)
     end
 
     def exit_success?(report, test_order = -1)

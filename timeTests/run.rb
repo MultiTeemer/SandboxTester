@@ -44,7 +44,7 @@ class TimeTests < Tester::SandboxTester
   def test_deadline
     omit_unless(Utils.spawner.has_feature?('deadline'))
 
-    params = [ { :deadline => Args::SecondsArgument.new(1) } ] * 4
+    params = [ { :idleness => Args::SecondsArgument.new(1) } ] * 4
     params.each_index do |i|
       aseq(Constants::TIME_LIMIT_EXCEEDED_RESULT, run_sandbox_test(i + 1, params[i])[Constants::TERMINATE_REASON_FIELD], i)
     end
