@@ -94,11 +94,11 @@ module Tester
 
           flags.push(:command)
         else
-          return files.sort.map { |exec| Utils.spawner.run(exec, args, flags, argv) }
+          return files.sort.map { |exec| Utils.sandbox.run(exec, args, flags, argv) }
         end
       end
 
-      Utils.spawner.run(executable, args, flags, argv)
+      Utils.sandbox.run(executable, args, flags, argv)
     end
 
     def exit_success?(report, test_order = -1)

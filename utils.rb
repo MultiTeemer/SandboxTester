@@ -75,14 +75,14 @@ module Utils
     FileUtils.rm_rf('bin')
   end
 
-  @spawner = nil
+  @sandbox = nil
 
-  def self.spawner
-    @spawner
+  def self.sandbox
+    @sandbox
   end
 
   def self.init_spawner(type, path)
-    @spawner = (case type
+    @sandbox = (case type
       when 'cats' then Wrappers::CatsSpawnerWrapper
       when 'pcms2' then Wrappers::PCMS2RunWrapper
       else nil

@@ -6,7 +6,7 @@ require './constants.rb'
 class EnvironmentTests < Tester::SandboxTester
 
   def test_modes
-    omit_unless(Utils.spawner.has_feature?('environment_modes'))
+    omit_unless(Utils.sandbox.has_feature?('environment_modes'))
 
     env_vars = [
         {
@@ -30,7 +30,7 @@ class EnvironmentTests < Tester::SandboxTester
       { :environment_vars => arr }
     end
 
-    Utils.spawner.environment_mods.each do |mode|
+    Utils.sandbox.environment_mods.each do |mode|
       out = FileHandler.new('tmp.txt')
       args = {
           :output => out.path,

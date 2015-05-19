@@ -6,6 +6,7 @@ require './constants.rb'
 class CmdArgsTests < Tester::SandboxTester
 
   private
+    args = Utils.sandbox.cmd_args
 
   def create_temporary_file
     super('tmp.txt', 'some data')
@@ -39,7 +40,6 @@ class CmdArgsTests < Tester::SandboxTester
   public
 
   def test_args_combinations
-    args = Utils.spawner.cmd_args
     create_temporary_file
     stuff.each do |item|
       (0..args.size).each do |length|
