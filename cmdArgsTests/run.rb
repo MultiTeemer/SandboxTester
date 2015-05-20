@@ -54,7 +54,7 @@ class CmdArgsTests < Tester::SandboxTester
     end
   end
 
-  def hide_report
+  def test_hide_report
     omit_unless(Utils.sandbox.has_feature?('hide_report'))
 
     rpt = run_sandbox_test(1, { :hide_report => SandboxArgs::HideReportFlag.new })
