@@ -77,7 +77,7 @@ module Wrappers
 
     class CommandFlag < SandboxArgs::FlagArgument
 
-      def initialize(val = true)
+      def initialize(val = 'cmd')
         super Args::FlagArgument.new(val), :command
       end
 
@@ -113,10 +113,12 @@ module Wrappers
             '1'
           elsif arg.val.instance_of?(FalseClass)
             '0'
+          elsif arg.val.to_s == 'cmd'
+            ''
           else
             arg.val.to_s
           end
-        when Args::ArrayArgument then arg.val.join('-D ')
+        when Args::ArrayArgument then arg.val.map{ |e| "-D #{e}" }.join(' ')
         else arg.to_s
       end
     end
@@ -128,7 +130,7 @@ module Wrappers
     def initialize(path)
       super
 
-      @cmd_arg_val_delim = ':'
+      @cmd_arg_val_delim = ' '
 
       @cmd_args_mapping = {
           :time_limit => :tl,
@@ -143,7 +145,6 @@ module Wrappers
           :hide_report => :hr,
           :command => :cmd,
           :environment_mode => :env,
-          :environment_vars => :D,
       }
 
       @cmd_args = [

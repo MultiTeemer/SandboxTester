@@ -42,7 +42,7 @@ class MemoryTests < Tester::SandboxTester
     delta = 1e-6
     while (l - r).abs >= delta
       m = (l + r) / 2
-      rpt = run_sandbox_test(1, { :memory_limit => Args::MegabyteArgument.new(4) }, [], [ m * 2 ** 20 ])
+      rpt = run_sandbox_test(1, { :memory_limit => Args::MegabyteArgument.new(4) }, [ m * 2 ** 20 ])
       #puts [m * 2 ** 20, rpt[Constants::TERMINATE_REASON_FIELD], rpt[Constants::PEAK_MEMORY_USED_FIELD]].join ' '
       if rpt[Constants::TERMINATE_REASON_FIELD] == Constants::MEMORY_LIMIT_EXCEEDED_RESULT
         r = m

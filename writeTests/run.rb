@@ -129,7 +129,7 @@ class WriteTests < Tester::SandboxTester
 
   def test_redirect_and_hide_output
     out_handler = FileHandler.new('out.txt')
-    exit_success?(run_sandbox_test(1, { :output => out_handler.path }, [ :hide_output ]))
+    exit_success?(run_sandbox_test(1, { :output => out_handler.path, :hide_output => Args::FlagArgument.new }))
     astrue(out_handler.read.empty?, 1)
   end
 

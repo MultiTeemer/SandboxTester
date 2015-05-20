@@ -196,12 +196,6 @@ module Args
 
   class ArrayArgument < Argument
 
-    def initialize(val)
-      super
-
-      @val = [@val] unless @val.instance_of?(Array)
-    end
-
   end
 
 end

@@ -24,7 +24,7 @@ class SecurityTests < Tester::SandboxTester
     out = FileHandler.new('out.txt')
 
     (5..8).each do |i|
-      run_sandbox_test(i, { :output => out.path })
+      run_sandbox_test(i, { :output => Args::StringArgument.new(out.path) })
 
       aseq(0, out.read.to_i, i)
 
@@ -37,7 +37,7 @@ class SecurityTests < Tester::SandboxTester
 
     sibling_dir = 'test'
 
-    run_sandbox_test(9, {}, [], [sibling_dir])
+    run_sandbox_test(9, {}, [sibling_dir])
 
     success = !Dir.entries('..').include?(sibling_dir)
 
@@ -52,7 +52,7 @@ class SecurityTests < Tester::SandboxTester
     file_content = '123'
     file = FileHandler.new("../#{sibling_dir}/file.txt", file_content)
 
-    run_sandbox_test(10, {}, [], [file.path])
+    run_sandbox_test(10, {}, [file.path])
 
     success = file.read == file_content
 
@@ -82,7 +82,7 @@ class SecurityTests < Tester::SandboxTester
   def test_interruns_communications
     tests_count.each do |i|
       out = FileHandler.new('out.txt')
-      rpts = run_sandbox_test(i, { :output => out.path })
+      rpts = run_sandbox_test(i, { :output => Args::StringArgument.new(out.path) })
 
       success = !out.read == 'some data'
       out.delete

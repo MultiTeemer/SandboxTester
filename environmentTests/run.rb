@@ -27,14 +27,14 @@ class EnvironmentTests < Tester::SandboxTester
         arr.push(k.to_s + '=' + v.to_s)
       end
 
-      { :environment_vars => arr }
+      { :environment_vars => Args::ArrayArgument.new(arr) }
     end
 
     Utils.sandbox.environment_mods.each do |mode|
       out = FileHandler.new('tmp.txt')
       args = {
           :output => out.path,
-          :environment_mode => mode,
+          :environment_mode => Utils.sandbox::EnvironmentModeArgument.new(mode),
       }
 
       exit_success?(run_sandbox_test(variables_counter_idx, args), test_counter)
@@ -76,26 +76,26 @@ class EnvironmentTests < Tester::SandboxTester
     var_value = 'val'
     out_handler = FileHandler.new('out.txt')
     args = {
-        :environment_vars => [var_name + '=' + var_value],
+        :environment_vars => Args::ArrayArgument.new([var_name + '=' + var_value]),
         :output => out_handler.path,
     }
 
     exit_success?(run_sandbox_test(1, args), 1)
 
-    run_sandbox_test(2, args, [], [var_name])
+    run_sandbox_test(2, args, [var_name])
 
     aseq(var_value, out_handler.read, 2)
 
     ids = (1..50).to_a.map { |_| rand(1 .. 1 << 15).to_s }
     vars = ids.map { |o| "#{var_name + o}=#{var_value + o}" }
     args = {
-        :environment_vars => vars,
+        :environment_vars => Args::ArrayArgument.new(vars),
     }
 
     exit_success?(run_sandbox_test(1, args), 3)
 
     ids.each do |id|
-      run_sandbox_test(2, args, [], [var_name + id])
+      run_sandbox_test(2, args, [var_name + id])
       aseq(var_value, out_handler.read, 4)
     end
   end

@@ -83,7 +83,7 @@ module Tester
         unless ext == 'exe'
 
           executable = Utils.get_compiler_for(executable).cmd + ' ' + executable
-          #flags.push(:command)
+          args[:command] = Args::FlagArgument.new
         end
       else
         files = Dir.entries(executable) - %w[ . .. ]
@@ -92,9 +92,9 @@ module Tester
           file = (Dir.entries(executable) - %w[ . .. ])[0]
           executable = "java -classpath #{executable}/ #{file[0 .. file.length - 7]}"
 
-          flags.push(:command)
+          args[:command] = Args::FlagArgument.new
         else
-          return files.sort.map { |exec| Utils.sandbox.run(exec, args, flags, argv) }
+          return files.sort.map { |exec| Utils.sandbox.run(exec, args, argv) }
         end
       end
 
