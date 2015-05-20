@@ -156,8 +156,10 @@ module Wrappers
           SandboxArgs::WorkingDirectoryArgument,
           SandboxArgs::UserCredentialsArgument,
           SandboxArgs::IdlenessLimitArgument,
+          SandboxArgs::EnvironmentVariablesArgument,
           DeadlineArgument,
           HideOutputFlag,
+          EnvironmentModeArgument,
       ].map { |klass| klass.new }
 
       @environment_mods = %w[ inherit user-default clear ]
@@ -213,11 +215,25 @@ module Wrappers
       res
     end
 
+    def unify(arg)
+      case arg
+        when Args::TimeArgument then arg.to_ms.to_s + 'ms'
+        when Args::MemoryArgument then arg.to_bytes
+        when Args::UserCredentialsArgument then "-l #{arg.username} -p #{arg.password}"
+        when Args::IdlenessLimitArgument then "-r #{arg.required_load} -y #{arg.idleness}"
+        when Args::ArrayArgument then arg.val.join('-D ')
+        when Args::FlagArgument then ''
+        else arg.to_s
+      end
+    end
+
     public
 
     def initialize(path)
       super
+
       @cmd_arg_val_delim = ' '
+
       @cmd_args_mapping = {
           :time_limit => :t,
           :memory_limit => :m,
@@ -226,16 +242,24 @@ module Wrappers
           :input => :i,
           :output => :o,
           :error => :e,
-          :idleness => :y,
-          :load_ratio => :r,
           :directory => :d,
           :store_in_file => :s,
           :hide_report => :q,
           :environment_vars => :D,
       }
-      @cmd_args = [
 
-      ]
+      @cmd_args = [
+          SandboxArgs::TimeLimitArgument,
+          SandboxArgs::MemoryLimitArgument,
+          SandboxArgs::InputFileArgument,
+          SandboxArgs::OutputFileArgument,
+          SandboxArgs::ErrorFileArgument,
+          SandboxArgs::WorkingDirectoryArgument,
+          SandboxArgs::UserCredentialsArgument,
+          SandboxArgs::IdlenessLimitArgument,
+          SandboxArgs::EnvironmentVariablesArgument,
+      ].map { |klass| klass.new }
+
       @features = %w[
           hide_report
       ]
