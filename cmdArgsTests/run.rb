@@ -29,7 +29,15 @@ class CmdArgsTests < Tester::SandboxTester
           run_args[arg.mean] = arg.class.correct_value
         end
 
-        exit_success?(run_sandbox_test(1, run_args), tests_counter += 1)
+        rpt = run_sandbox_test(1, run_args)
+        runs_counter = 0
+
+        while rpt[Constants::TERMINATE_REASON_FIELD].nil? and runs_counter < 100
+          rpt = run_sandbox_test(1, run_args)
+          runs_counter += 1
+        end
+
+        exit_success?(rpt, tests_counter += 1)
       end
     end
   end
