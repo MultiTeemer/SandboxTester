@@ -15,6 +15,7 @@ module Constants
   TERMINATE_REASON_FIELD = :terminateReason
   EXIT_STATUS_FIELD = :exitStatus
   SPAWNER_ERROR_FIELD = :spawnerError
+  SANDBOX_RUN_STATUS = :sandboxRunStatus
 
   EXIT_PROCESS_RESULT = 'ExitProcess'
   TIME_LIMIT_EXCEEDED_RESULT = 'TimeLimitExceeded'
@@ -32,6 +33,9 @@ module Constants
   ARRAY_BOUNDS_EXCEEDED_EXIT_STATUS = 'ArrayBoundsExceeded'
 
   NONE_ERROR_SP_ERROR = '<none>'
+
+  SANDBOX_RUN_STATUS_COMPLETED = 0
+  SANDBOX_RUN_STATUS_TIMEOUT = 1
 
   REPORT_FIELDS = %i[
         application

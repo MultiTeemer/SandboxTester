@@ -102,6 +102,7 @@ module Tester
     end
 
     def exit_success?(report, test_order = -1)
+      aseq(Constants::SANDBOX_RUN_STATUS_COMPLETED, report[Constants::SANDBOX_RUN_STATUS], test_order)
       aseq(Constants::EXIT_PROCESS_RESULT, report[Constants::TERMINATE_REASON_FIELD], test_order)
       aseq('0', report[Constants::EXIT_STATUS_FIELD], test_order)
       aseq('<none>', report[Constants::SPAWNER_ERROR_FIELD], test_order)

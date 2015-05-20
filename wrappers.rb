@@ -1,3 +1,5 @@
+require 'timeout'
+
 require './args.rb'
 require './constants.rb'
 require './sandbox_args.rb'
@@ -42,14 +44,29 @@ module Wrappers
       @cmd_arg_val_delim = ''
     end
 
-    def run(executable, args = {}, argv = [])
+    def run(executable, args = {}, argv = [], waiting = 1)
       cmd = @path
 
       args.each { |mean, val| cmd += ' ' + to_cmd(mean, val) }
 
       cmd += " #{executable} #{argv.join(' ')}"
 
-      parse_report(%x[#{cmd}])
+      begin
+        raw_report = Timeout::timeout(waiting) { %x[#{cmd}] }
+      rescue
+        rpt = { Constants::SANDBOX_RUN_STATUS => Constants::SANDBOX_RUN_STATUS_TIMEOUT }
+        raw_report = nil
+      end
+
+      unless raw_report.nil?
+        rpt = parse_report(raw_report).merge(
+            {
+                Constants::SANDBOX_RUN_STATUS => Constants::SANDBOX_RUN_STATUS_COMPLETED
+            }
+        )
+      end
+
+      rpt
     end
 
     def has_feature?(feature)
