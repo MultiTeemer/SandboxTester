@@ -69,11 +69,11 @@ module SandboxArgs
     end
 
     def self.wrong_value
-      Args::KilobyteArgument.new(0)
+      Args::MegabyteArgument.new(0)
     end
 
     def self.correct_value
-      Args::KilobyteArgument.new(1)
+      Args::MegabyteArgument.new(5)
     end
 
   end
