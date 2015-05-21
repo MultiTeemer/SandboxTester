@@ -37,22 +37,4 @@ module Constants
   SANDBOX_RUN_STATUS_COMPLETED = 0
   SANDBOX_RUN_STATUS_TIMEOUT = 1
 
-  REPORT_FIELDS = %i[
-        application
-        parameters
-        securityLevel
-        createProcessMethod
-        userName
-        userTimeLimit
-        deadline
-        memoryLimit
-        writeLimit
-        userTime
-        peakMemoryUsed
-        written
-        terminateReason
-        exitStatus
-        spawnerError
-    ]
-
 end

@@ -79,6 +79,24 @@ module Wrappers
 
     private
 
+    REPORT_FIELDS = %i[
+        application
+        parameters
+        securityLevel
+        createProcessMethod
+        userName
+        userTimeLimit
+        deadline
+        memoryLimit
+        writeLimit
+        userTime
+        peakMemoryUsed
+        written
+        terminateReason
+        exitStatus
+        spawnerError
+    ]
+
     @environment_mods
 
     class DeadlineArgument < SandboxArgs::TimeLimitArgument
@@ -110,12 +128,14 @@ module Wrappers
 
     def parse_report(rpt)
       res = {}
-      Constants::REPORT_FIELDS.each do |field|
+
+      REPORT_FIELDS.each do |field|
         rpt =~ /\n#{field}:\s+(.+)(\(\S+\))?\n/i
         v = $1
         v = $1.to_f if v =~ /^(\d+\.?\d+)\s?(\S+)?$/
         res[field.to_sym] = v
       end
+
       res
     end
 
