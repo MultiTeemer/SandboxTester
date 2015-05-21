@@ -112,7 +112,7 @@ module Wrappers
 
     class CommandFlag < SandboxArgs::FlagArgument
 
-      def initialize(val = 'cmd')
+      def initialize(val = '')
         super Args::FlagArgument.new(val), :command
       end
 
@@ -207,6 +207,7 @@ module Wrappers
           deadline
           write_limit
           hide_report
+          cmd
       ]
     end
 

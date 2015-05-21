@@ -3,7 +3,7 @@ require 'fileutils'
 require './constants.rb'
 
 module Tester
-  
+
   class SandboxTester < Test::Unit::TestCase
 
     private
@@ -83,7 +83,7 @@ module Tester
         unless ext == 'exe'
 
           executable = Utils.get_compiler_for(executable).cmd + ' ' + executable
-          args[:command] = Args::FlagArgument.new
+          args[:command] = Utils.sandbox.class::CommandFlag.new if Utils.sandbox.has_feature?('cmd')
         end
       else
         files = Dir.entries(executable) - %w[ . .. ]
@@ -92,7 +92,7 @@ module Tester
           file = (Dir.entries(executable) - %w[ . .. ])[0]
           executable = "java -classpath #{executable}/ #{file[0 .. file.length - 7]}"
 
-          args[:command] = Args::FlagArgument.new
+          args[:command] = Utils.sandbox.class::CommandFlag.new if Utils.sandbox.has_feature?('cmd')
         else
           return files.sort.map { |exec| Utils.sandbox.run(exec, args, argv) }
         end
