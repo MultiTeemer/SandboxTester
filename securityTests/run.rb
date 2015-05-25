@@ -5,6 +5,35 @@ require './tester.rb'
 
 class SecurityTests < Tester::SandboxTester
 
+  private
+
+    @can_read
+    @can_write
+
+  public
+
+  def initialize(test_method_name, test = nil)
+    super
+
+    @can_read = 'canRead.txt'
+    @can_write = 'canWrite.txt'
+  end
+
+  def setup
+    super
+
+    setup_script = '../../lib/spawner/user-setup.ps1'
+
+    system("powershell -file #{setup_script} -canRead #{@can_read} -canWrite #{@can_write} > nul")
+  end
+
+  def run_sandbox_test(test_order = nil, args = {}, argv = [], wait = 1)
+    string = Args::StringArgument
+    args[:logon] = Args::UserCredentialsArgument.new(string.new('runner'), string.new('12345'))
+
+    super
+  end
+
   def test_file_system
     args = [
         {
@@ -17,7 +46,9 @@ class SecurityTests < Tester::SandboxTester
 
     (1..4).each do |i|
       args.each_index do |j|
-        run_sandbox_test(i, args[j])
+        rpt = run_sandbox_test(i, args[j], [], 3)
+
+        aseq(0, rpt[Constants::WRITTEN_FIELD] || 0, i)
       end
     end
 
@@ -41,7 +72,7 @@ class SecurityTests < Tester::SandboxTester
 
     success = !Dir.entries('..').include?(sibling_dir)
 
-    Dir.rmdir("../#{sibling_dir}")
+    FileUtils.rm_rf("../#{sibling_dir}")
 
     astrue(success, 9)
 
@@ -56,7 +87,7 @@ class SecurityTests < Tester::SandboxTester
 
     success = file.read == file_content
 
-    Dir.rm_rf("../#{sibling_dir}")
+    FileUtils.rm_rf("../#{sibling_dir}")
 
     astrue(success, 10)
   end
