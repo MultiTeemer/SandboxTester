@@ -1,0 +1,3 @@
+[submodule "lib/spawner"]
+	path = lib/spawner
+	url = http://github.com/MultiTeemer/Spawner
