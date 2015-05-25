@@ -70,7 +70,7 @@ module Tester
       @one_test = test
     end
 
-    def run_sandbox_test(test_order = nil, args = {}, argv = [])
+    def run_sandbox_test(test_order = nil, args = {}, argv = [], wait = 1)
       executable = Dir[File.absolute_path(Dir.getwd) + '/*'].find do |filename|
         filename =~ /#{sprintf('%02d', test_order)}(\.(.*))?$/
       end
@@ -98,7 +98,7 @@ module Tester
         end
       end
 
-      Utils.sandbox.run(executable, args, argv)
+      Utils.sandbox.run(executable, args, argv, wait)
     end
 
     def exit_success?(report, test_order = -1)
