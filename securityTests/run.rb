@@ -90,6 +90,19 @@ class SecurityTests < Tester::SandboxTester
     FileUtils.rm_rf("../#{sibling_dir}")
 
     astrue(success, 10)
+
+    #11th test
+
+    filename = 'file.txt'
+    path = "../#{filename}"
+
+    run_sandbox_test(11, {}, [filename])
+
+    success = !File.exist?(path) || IO.read(path).bytesize == 0
+
+    File.delete(path) if File.exist?(path)
+
+    astrue(success, 11)
   end
 
   def test_destabilization
