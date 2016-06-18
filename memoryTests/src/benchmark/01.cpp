@@ -5,7 +5,7 @@ int main(int argc, char* argv[])
 {
     long long limit = atoll(argv[1]);
 
-    printf("%ld", limit);
+    printf("%lld", limit);
 
     malloc(limit);
 
