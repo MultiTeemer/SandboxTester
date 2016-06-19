@@ -182,6 +182,7 @@ module Wrappers
           :hide_report => :hr,
           :command => :cmd,
           :environment_mode => :env,
+          :security => :s,
       }
 
       @cmd_args = [

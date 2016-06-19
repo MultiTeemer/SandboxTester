@@ -1,4 +1,9 @@
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
+#else
+#include <stdlib.h>
+#define HeapAlloc(A, B, C) malloc(C)
+#endif
 
 static const int size = 1000000;
 
